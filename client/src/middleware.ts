@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { Auth } from "./Contexts/UserContext";
 
-const protectedRoutes = ["/user"];
+const protectedRoutes = ["/user/:id"];
 
 export default function middleware(req: NextRequest) {
-  const isAuthenticated = true;
+  const isAuthenticated = false;
   if (!isAuthenticated && protectedRoutes.includes(req.nextUrl.pathname)) {
     const absoluteURL = new URL("/", req.nextUrl.origin);
     return NextResponse.redirect(absoluteURL.toString());

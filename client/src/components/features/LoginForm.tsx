@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Formik } from "formik";
 
-import { Auth } from "@/Contexts/UserContext";
+import { useAuth } from "@/Contexts/UserContext";
 
 import Text from "../shared/Text";
 import Input from "../shared/Input";
@@ -12,7 +12,7 @@ import Button from "../shared/Button";
 type FormProps = {};
 
 const LoginForm: React.FC<FormProps> = (props) => {
-  const { login } = Auth();
+  const { login } = useAuth();
 
   return (
     <Formik

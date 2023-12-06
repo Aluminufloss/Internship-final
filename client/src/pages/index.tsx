@@ -1,13 +1,25 @@
 import Footer from "@/components/widgets/Footer";
 import Header from "@/components/widgets/Header";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import BannerTop from "@/components/entities/BannerTop";
 import BannerBottom from "@/components/entities/BannerBottom";
+import { getServerSideProps } from "@/utils/helper/helper";
+import { IUser } from "@/models/response/Auth/IUser";
+import { useAuth } from "@/Contexts/UserContext";
 
 type Props = {};
 
 const Home: React.FC<Props> = (props) => {
+  const { setUser } = useAuth();
+
+  useEffect(() => {
+    (async () => {
+      const response = await getServerSideProps();
+      setUser(response.props.user, response.props.isAuth);
+    })();
+  }, []);
+
   return (
     <Layout>
       <Header />

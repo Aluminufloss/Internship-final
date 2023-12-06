@@ -73,9 +73,20 @@ class UserContoller {
 
   async getMe(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
-      const userData = await userSevice.getUser(refreshToken);
+      const { user } = req;
+      const userData = await userSevice.getUser(user);
       return res.json(userData);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getAccessToken(req, res, next) {
+    try {
+      const { refreshToken } = req.cookies;
+      const data = await userSevice.getAccessToken(refreshToken);
+      console.log("Yep ", data);
+      return res.json(data.accessToken);
     } catch (err) {
       next(err);
     }

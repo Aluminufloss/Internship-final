@@ -1,29 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import Text from "../shared/Text";
 import Input from "../shared/Input";
 import Label from "../shared/label";
 import Button from "../shared/Button";
-import { useInitialized } from "@/hooks/useInitialized";
-import { Auth } from "@/Contexts/UserContext";
+
+import { useAuth } from "@/Contexts/UserContext";
 
 type FormProps = {};
 
 const UserForm: React.FC<FormProps> = (props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isInitialized, setInitialized] = useState(false);
-  const { state, getMe } = Auth();
+  const { state, getMe } = useAuth();
 
-  useEffect(() => {
-    if (getMe === undefined) {
-      console.log('getMe undefined')
-      setInitialized(false);
-    } else {
-      getMe();
-      setInitialized(true);
-    }
-  }, [])
+  console.log("This is our state", state);
 
   function handlePasswordClick(ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     ev.preventDefault();
@@ -32,7 +23,7 @@ const UserForm: React.FC<FormProps> = (props) => {
 
   return (
     <>
-    {isInitialized ? <StyledUserForm>
+    <StyledUserForm>
       <Text
         fontSize="medium"
         fontWeight="medium"
@@ -112,7 +103,7 @@ const UserForm: React.FC<FormProps> = (props) => {
       <Button type="primary" width="151" height="44">
         Confirm
       </Button>
-    </StyledUserForm> : "Loading..."}
+    </StyledUserForm>
     </>
   );
 };

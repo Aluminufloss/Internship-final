@@ -1,11 +1,11 @@
-import { createContext, useContext, useReducer, useState } from "react";
+import { createContext, useContext, useReducer } from "react";
 
 import { IUser } from "@/models/response/Auth/IUser";
 
 import AuthService from "@/services/AuthService";
 
 type AuthentificationState = {
-  user: IUser | string;
+  user: IUser;
   isLoading: boolean;
   isAuth: boolean;
   error: string;
@@ -15,35 +15,85 @@ enum ActionKind {
   Login = "user/login",
   LoginRejected = "user/rejected",
   GetMe = "user/getMe",
+  SetUser = "user/setUser",
   Loading = "loading",
   Registration = "user/registration",
 }
 
-type PayloadKind = IUser | string;
-
-type Action = {
-  type: ActionKind;
-  payload: PayloadKind;
+type PayloadKind = {
+  user?: IUser;
+  error?: string;
+  email?: string;
+  isAuth?: boolean;
 };
+
+// type Action = {
+//   type: ActionKind;
+//   payload?: PayloadKind;
+// };
+
+//---------------------------------------//
+type LoginAction = {
+  type: ActionKind.Login;
+  payload: IUser;
+};
+
+type RegistrationAction = {
+  type: ActionKind.Registration;
+  payload: IUser;
+};
+
+type LoginRejected = {
+  type: ActionKind.LoginRejected;
+  payload: string;
+};
+
+type SetUser = {
+  type: ActionKind.SetUser;
+  payload: {
+    user: IUser;
+    isAuth: boolean;
+  };
+};
+
+type Loading = {
+  type: ActionKind.Loading;
+  payload?: string;
+};
+
+type Action =
+  | LoginAction
+  | RegistrationAction
+  | LoginRejected
+  | SetUser
+  | Loading;
+//---------------------------------------//
 
 export type UserContextType = {
   state: AuthentificationState;
   login: (email: string, password: string) => void;
   registration: (email: string, password: string) => void;
   getMe: () => void;
+  setUser: (user: IUser, isAuth: boolean) => void;
 };
 
-const UserContext = createContext<UserContextType>({} as UserContextType);
-
-const initialState = {
-  user: {
-    id: "",
-    email: "User",
+const initialState: UserContextType = {
+  state: {
+    user: {
+      id: "",
+      email: "",
+    },
+    isLoading: false,
+    isAuth: false,
+    error: "",
   },
-  isLoading: false,
-  isAuth: false,
-  error: "",
+  login: () => null,
+  registration: () => null,
+  getMe: () => null,
+  setUser: () => null,
 };
+
+const UserContext = createContext<UserContextType>(initialState);
 
 function userReducer(
   state: AuthentificationState,
@@ -68,13 +118,22 @@ function userReducer(
       };
     }
 
-    case ActionKind.GetMe: {
+    // case ActionKind.GetMe: {
+    //   return {
+    //     ...state,
+    //     isAuth: true,
+    //     isLoading: false,
+    //     user: action.payload as IUser,
+    //   };
+    // }
+
+    case ActionKind.SetUser: {
       return {
         ...state,
-        isAuth: true,
+        isAuth: action.payload.isAuth,
         isLoading: false,
-        user: action.payload,
-      }
+        user: action.payload.user,
+      };
     }
 
     case ActionKind.Registration: {
@@ -94,7 +153,7 @@ function userReducer(
     }
 
     default:
-      throw new Error("Unknown action type");
+      return state;
   }
 }
 
@@ -102,11 +161,14 @@ type UserProviderType = {
   children?: React.ReactNode;
 };
 
-function UserProvider({ children }: UserProviderType) {
+function UserProvider(
+  { children }: UserProviderType,
+  initialState: AuthentificationState
+) {
   const [state, dispatch] = useReducer(userReducer, initialState);
 
   async function login(email: string, password: string) {
-    dispatch({ type: ActionKind.Loading, payload: email });
+    dispatch({ type: ActionKind.Loading });
 
     try {
       const response = await AuthService.login(email, password);
@@ -119,7 +181,7 @@ function UserProvider({ children }: UserProviderType) {
   }
 
   async function registration(email: string, password: string) {
-    dispatch({ type: ActionKind.Loading, payload: "" });
+    dispatch({ type: ActionKind.Loading });
     try {
       const response = await AuthService.registration(email, password);
 
@@ -130,11 +192,20 @@ function UserProvider({ children }: UserProviderType) {
   }
 
   async function getMe() {
-    dispatch({ type: ActionKind.Loading, payload: "" });
+    dispatch({ type: ActionKind.Loading });
     try {
       const response = await AuthService.getMe();
 
-      dispatch({ type: ActionKind.GetMe, payload: response.data.user });
+      // dispatch({ type: ActionKind.GetMe, payload: response.data.user });
+    } catch (err) {
+      console.log("Something wrong");
+    }
+  }
+
+  async function setUser(user: IUser, isAuth: boolean) {
+    dispatch({ type: ActionKind.Loading });
+    try {
+      dispatch({ type: ActionKind.SetUser, payload: { user, isAuth } });
     } catch (err) {
       console.log("Something wrong");
     }
@@ -147,6 +218,7 @@ function UserProvider({ children }: UserProviderType) {
         login,
         registration,
         getMe,
+        setUser,
       }}
     >
       {children}
@@ -154,9 +226,9 @@ function UserProvider({ children }: UserProviderType) {
   );
 }
 
-function Auth() {
+function useAuth() {
   const context = useContext(UserContext);
   return context;
 }
 
-export { UserProvider, Auth };
+export { UserProvider, useAuth };

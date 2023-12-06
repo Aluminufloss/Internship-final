@@ -63,6 +63,10 @@ select:focus {
   outline-offset: -1px;
 } */
 
+input[type=file] {
+  opacity: 0;
+}
+
 input:focus {
   outline: none;
 }

@@ -6,18 +6,18 @@ module.exports = function (req, res, next) {
     const authorizationHeader = req.headers.authorization;
 
     if (!authorizationHeader) {
-      return next(ApiError.UnauthorizedError());
+      return next(ApiError.UnauthorizedError("Authorization Header doesn't exist"));
     }
 
     const accessToken = authorizationHeader.split(" ")[1];
     if (!accessToken) {
-      return next(ApiError.UnauthorizedError());
+      return next(ApiError.UnauthorizedError("You don't have an access token"));
     }
 
     const userData = tokenService.validateAccessToken(accessToken);
-    console.log(userData);
+    
     if (!userData) {
-      return next(ApiError.UnauthorizedError());
+      return next(ApiError.UnauthorizedError("Your access token haven't validated correct"));
     }
 
     req.user = userData;

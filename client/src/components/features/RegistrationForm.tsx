@@ -13,12 +13,12 @@ import Text from "../shared/Text";
 import Input from "../shared/Input";
 import Label from "../shared/label";
 import Button from "../shared/Button";
-import { Auth } from "@/Contexts/UserContext";
+import { useAuth } from "@/Contexts/UserContext";
 
 type FormProps = {};
 
 const RegistrationForm: React.FC<FormProps> = (props) => {
-  const { registration } = Auth();
+  const { registration } = useAuth();
 
   return (
     <Formik
