@@ -4,6 +4,7 @@ const tokenService = require("../service/token-service");
 module.exports = function (req, res, next) {
   try {
     const authorizationHeader = req.headers.authorization;
+    console.log("Header", req.headers);
 
     if (!authorizationHeader) {
       return next(ApiError.UnauthorizedError("Authorization Header doesn't exist"));
@@ -19,6 +20,8 @@ module.exports = function (req, res, next) {
     if (!userData) {
       return next(ApiError.UnauthorizedError("Your access token haven't validated correct"));
     }
+
+    console.log("Mussaka", userData);
 
     req.user = userData;
     next();

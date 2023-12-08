@@ -13,12 +13,12 @@ type Props = {};
 const Home: React.FC<Props> = (props) => {
   const { setUser } = useAuth();
 
-  useEffect(() => {
-    (async () => {
-      const response = await getServerSideProps();
-      setUser(response.props.user, response.props.isAuth);
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const response = await getServerSideProps();
+  //     setUser(response.props.user, response.props.isAuth);
+  //   })();
+  // }, []);
 
   return (
     <Layout>

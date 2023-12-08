@@ -55,7 +55,7 @@ class UserService {
     if (!refreshToken) {
       throw ApiError.UnauthorizedError("You don't have a token");
     }
-    
+
     const userData = tokenService.validateRefreshToken(refreshToken);
     const tokenFromDB = await tokenService.findToken(refreshToken);
     if (!userData) {
@@ -70,48 +70,14 @@ class UserService {
 
     return this.generateTokens(user);
   }
-
-  // async getUser() {
-  //   if (!refreshToken) {
-  //     throw ApiError.UnauthorizedError("User doesn't have a token");
-  //   }
-
-  //   const userData = tokenService.validateRefreshToken(refreshToken);
-  //   const tokenFromDB = await tokenService.findToken(refreshToken);
-  //   if (!userData) {
-  //     throw ApiError.UnauthorizedError("Token didn't validate correctly");
-  //   }
-
-  //   if (!tokenFromDB) {
-  //     throw ApiError.UnauthorizedError("Token doesn't exist in database");
-  //   }
-
-  //   const user = await UserModel.findById(userData.id);
-  //   const userDto = new UserDto(user);
-
-  //   return { user: userDto };
-  // }
 
   async getUser(user) {
+    if (!user) {
+      throw ApiError.UnauthorizedError("Cannot get the user");
+    } 
+
     const userDto = new UserDto(user);
     return { user: userDto };
-  }
-
-  async getAccessToken(refreshToken) {
-    const userData = tokenService.validateRefreshToken(refreshToken);
-    const tokenFromDB = await tokenService.findToken(refreshToken);
-    console.log("Token suka -------------------------------------------------- ", tokenFromDB)
-    if (!userData) {
-      throw ApiError.UnauthorizedError("Token didn't validate correctly");
-    }
-
-    if (!tokenFromDB) {
-      throw ApiError.UnauthorizedError("Token doesn't exist in database");
-    }
-
-    const user = await UserModel.findById(userData.id);
-
-    return this.generateTokens(user);
   }
 }
 

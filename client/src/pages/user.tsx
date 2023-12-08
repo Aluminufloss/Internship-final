@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { GetServerSideProps } from "next";
+import cookies from 'cookies';
 
 import Layout from "@/components/layout/Layout";
 
@@ -12,20 +13,23 @@ import Avatar from "@/components/entities/Avatar";
 
 import { useAuth } from "@/Contexts/UserContext";
 import AuthService from "@/services/AuthService";
+import { IUser } from "@/models/response/Auth/IUser";
 
 // import { getServerSideProps } from "@/utils/helper/helper";
 
-type Props = {};
+type Props = {
+  user: IUser,
+  isAuth: boolean,
+};
 
 const User: React.FC<Props> = (props) => {
   const { state, setUser } = useAuth();
   console.log("here", props);
-  // useEffect(() => {
-  //   (async () => {
-  //     const response = await getServerSideProps();
-  //     setUser(response.props.user, response.props.isAuth);
-  //   })();
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      setUser(props.user, props.isAuth);
+    })();
+  }, []);
   
   return (
     <Layout>
@@ -39,8 +43,10 @@ const User: React.FC<Props> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async(ctx) => {
   try {
-    const response = await AuthService.getMe();
-    console.log(response);
+    const { refreshToken, accessToken } = ctx.req.cookies;
+    const response = await AuthService.getMe(refreshToken as string, accessToken as string);
+    console.log("Resp", response);
+    
     return {
       props: { user: response.data.user, isAuth: true },
     };

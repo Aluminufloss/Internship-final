@@ -2,6 +2,11 @@ import $api from "../axios/index";
 import { AxiosResponse } from "axios";
 import { AuthRespone } from "../models/response/Auth/AuthResponse";
 
+type s = {
+  refreshToken: string,
+  accessToken: string,
+}
+
 export default class AuthService {
   static async login(
     email: string,
@@ -24,7 +29,21 @@ export default class AuthService {
     return $api.post("/logout");
   }
 
-  static async getMe(): Promise<AxiosResponse<AuthRespone>>{
-    return $api.get("/user");
+  static async getMe(
+    refreshToken: string,
+    accessToken: string,
+  ): Promise<AxiosResponse<AuthRespone>> {
+    return $api.post("/user", { refreshToken, accessToken });
+  }
+
+  static async refresh(
+  ): Promise<AxiosResponse<AuthRespone>> {
+    return $api.get("/refresh");
+  }
+
+  static async getAccessToken(
+    refreshToken: string
+  ): Promise<AxiosResponse<AuthRespone>> {
+    return $api.post("/access", { refreshToken });
   }
 }

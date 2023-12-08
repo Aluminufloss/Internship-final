@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import { API_URL } from "@/utils/constant/constant";
 import { AuthRespone } from "@/models/response/Auth/AuthResponse";
 
@@ -17,9 +17,8 @@ const $api = axios.create({
 
 $api.interceptors.request.use(async (config) => {
   try {
-    const response = await axios.get<AuthRespone>(`${API_URL}/refresh`, { withCredentials: true });
-    const token = response.data.accessToken;
-    console.log(token);
+    const token = config.data.accessToken;
+    console.log("Token", token)
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -38,12 +37,19 @@ $api.interceptors.response.use((config) => {
   return config;
 }, async (error) => {
   const originalRequest = error.config;
-  console.log("error", error);
   if (error.response.status === 401 && error.config && !error.config._isRetry) {
     originalRequest._isRetry = true;
     try {
-      const response = await axios.get<AuthRespone>(`${API_URL}/refresh`, { withCredentials: true });
-      localStorage.setItem("token", response.data.accessToken);
+      const { refreshToken } = JSON.parse(originalRequest.data);
+
+      const response = await axios.post<AuthRespone>(`${API_URL}/refresh`, { withCredentials: true, refreshToken });
+      console.log("suka");
+      const token = response.data.accessToken;
+      window.localStorage.setItem("token", response.data.refreshToken);
+      window.
+
+      originalRequest.headers.Authorization = `Bearer ${token}`;
+
       return $api.request(originalRequest);
     } catch (err) {
       console.log("Не авторизован");

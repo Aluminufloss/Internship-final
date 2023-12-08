@@ -20,6 +20,11 @@ class UserContoller {
         httpOnly: true,
       });
 
+      res.cookie("accessToken", userData.accessToken, {
+        maxAge: 1 * 1 * 15 * 60 * 1000,
+        httpOnly: true,
+      });
+
       return res.json(userData);
     } catch (err) {
       next(err);
@@ -32,6 +37,11 @@ class UserContoller {
       const userData = await userSevice.login(email, password);
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+
+      res.cookie("accessToken", userData.accessToken, {
+        maxAge: 1 * 1 * 15 * 60 * 1000,
         httpOnly: true,
       });
 
@@ -48,6 +58,7 @@ class UserContoller {
       const token = await userSevice.logout(refreshToken);
 
       res.clearCookie("refreshToken");
+      res.clearCookie("accessToken");
 
       return res.json(token);
     } catch (err) {
@@ -57,11 +68,17 @@ class UserContoller {
 
   async refresh(req, res, next) {
     try {
-      const { refreshToken } = req.cookies;
+      const { refreshToken } = req.body;
+      console.log("suka", refreshToken);
       const userData = await userSevice.refresh(refreshToken);
 
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+
+      res.cookie("accessToken", userData.accessToken, {
+        maxAge: 1 * 1 * 15 * 60 * 1000,
         httpOnly: true,
       });
 
@@ -73,20 +90,10 @@ class UserContoller {
 
   async getMe(req, res, next) {
     try {
-      const { user } = req;
+      console.log("yes")
+      const user = req.user;
       const userData = await userSevice.getUser(user);
       return res.json(userData);
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  async getAccessToken(req, res, next) {
-    try {
-      const { refreshToken } = req.cookies;
-      const data = await userSevice.getAccessToken(refreshToken);
-      console.log("Yep ", data);
-      return res.json(data.accessToken);
     } catch (err) {
       next(err);
     }
