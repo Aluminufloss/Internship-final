@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import BannerTop from "@/components/entities/BannerTop";
 import BannerBottom from "@/components/entities/BannerBottom";
-import { getServerSideProps } from "@/utils/helper/helper";
 import { IUser } from "@/models/response/Auth/IUser";
 import { useAuth } from "@/Contexts/UserContext";
+import { GetServerSideProps } from "next";
 
 type Props = {};
 
@@ -37,5 +37,15 @@ const Home: React.FC<Props> = (props) => {
     </Layout>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async(ctx) => {
+  console.log("sss", ctx.req);
+
+  const c = "s";
+
+  return {
+    props: { c }
+  };
+}
 
 export default Home;

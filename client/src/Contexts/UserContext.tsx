@@ -172,7 +172,6 @@ function UserProvider(
 
     try {
       const response = await AuthService.login(email, password);
-      localStorage.setItem("token", response.data.accessToken);
 
       dispatch({ type: ActionKind.Login, payload: response.data.user });
     } catch (err) {
@@ -194,7 +193,7 @@ function UserProvider(
   async function getMe() {
     dispatch({ type: ActionKind.Loading });
     try {
-      const response = await AuthService.getMe();
+      // const response = await AuthService.getMe();
 
       // dispatch({ type: ActionKind.GetMe, payload: response.data.user });
     } catch (err) {

@@ -3,6 +3,7 @@ const tokenService = require("../service/token-service");
 
 module.exports = function (req, res, next) {
   try {
+    console.log("eb");
     const authorizationHeader = req.headers.authorization;
     console.log("Header", req.headers);
 

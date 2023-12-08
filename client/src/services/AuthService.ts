@@ -2,11 +2,6 @@ import $api from "../axios/index";
 import { AxiosResponse } from "axios";
 import { AuthRespone } from "../models/response/Auth/AuthResponse";
 
-type s = {
-  refreshToken: string,
-  accessToken: string,
-}
-
 export default class AuthService {
   static async login(
     email: string,

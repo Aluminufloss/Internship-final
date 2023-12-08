@@ -7,18 +7,9 @@ const $api = axios.create({
   baseURL: API_URL,
 });
 
-// $api.interceptors.request.use((config) => {
-//   const token = localStorage.getItem("token");
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
-
 $api.interceptors.request.use(async (config) => {
   try {
     const token = config.data.accessToken;
-    console.log("Token", token)
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -26,7 +17,7 @@ $api.interceptors.request.use(async (config) => {
 
     return config;
   } catch (err) {
-    console.log("Не авторизован");
+    console.log("Ошибка при формировании заголовка запроса");
   }
 
   return config;
@@ -40,19 +31,19 @@ $api.interceptors.response.use((config) => {
   if (error.response.status === 401 && error.config && !error.config._isRetry) {
     originalRequest._isRetry = true;
     try {
+      console.log("Second step")
       const { refreshToken } = JSON.parse(originalRequest.data);
+      console.log("Refresh", refreshToken);
 
       const response = await axios.post<AuthRespone>(`${API_URL}/refresh`, { withCredentials: true, refreshToken });
-      console.log("suka");
       const token = response.data.accessToken;
-      window.localStorage.setItem("token", response.data.refreshToken);
-      window.
 
       originalRequest.headers.Authorization = `Bearer ${token}`;
+      originalRequest.headers.token = response.data.refreshToken;
 
       return $api.request(originalRequest);
     } catch (err) {
-      console.log("Не авторизован");
+      console.log("Ошибка перехватчика на 401 статус-код");
     }
   }
   throw error;

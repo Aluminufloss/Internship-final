@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { GetServerSideProps } from "next";
-import cookies from 'cookies';
+import cookie from "cookie";
 
 import Layout from "@/components/layout/Layout";
 
@@ -44,11 +44,29 @@ const User: React.FC<Props> = (props) => {
 export const getServerSideProps: GetServerSideProps = async(ctx) => {
   try {
     const { refreshToken, accessToken } = ctx.req.cookies;
+
     const response = await AuthService.getMe(refreshToken as string, accessToken as string);
-    console.log("Resp", response);
+    console.log("Resp", response.data);
+    const { user, refreshToken: rToken, accessToken: aToken } = response.data;
+    console.log("sus ", aToken);
+
+    if (rToken !== undefined) {
+
+      ctx.res.setHeader("Set-cookie", cookie.serialize("refreshToken", ""));
+
+      ctx.res.setHeader("Set-cookie", cookie.serialize("refreshToken", rToken, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      }));
+
+      ctx.res.setHeader("Set-cookie", cookie.serialize("accessToken", aToken, {
+        httpOnly: true,
+        maxAge: 1 * 1 * 15 * 60 * 1000,
+      }));
+    }
     
     return {
-      props: { user: response.data.user, isAuth: true },
+      props: { user, isAuth: true },
     };
   } catch (err) {
     console.log(err);

@@ -90,10 +90,14 @@ class UserContoller {
 
   async getMe(req, res, next) {
     try {
-      console.log("yes")
-      const user = req.user;
-      const userData = await userSevice.getUser(user);
-      return res.json(userData);
+      console.log("nope ", req.headers.token);
+      const accessToken = req.headers.authorization.split(" ")[1];
+      const refreshToken = req.headers.token;
+      const userData = await userSevice.getUser(req.user);
+
+      console.log("yes ", accessToken);
+
+      return res.json({ user: userData.user, refreshToken, accessToken });
     } catch (err) {
       next(err);
     }
