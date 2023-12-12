@@ -12,7 +12,7 @@ $api.interceptors.request.use(async (config) => {
     const token = config.data.accessToken;
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers!.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -31,7 +31,6 @@ $api.interceptors.response.use((config) => {
   if (error.response.status === 401 && error.config && !error.config._isRetry) {
     originalRequest._isRetry = true;
     try {
-      console.log("Second step")
       const { refreshToken } = JSON.parse(originalRequest.data);
       console.log("Refresh", refreshToken);
 

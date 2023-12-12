@@ -1,110 +1,147 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { Formik } from "formik";
 
 import Text from "../shared/Text";
 import Input from "../shared/Input";
 import Label from "../shared/label";
 import Button from "../shared/Button";
 
-import { useAuth } from "@/Contexts/UserContext";
+import { IUser } from "@/models/response/Auth/IUser";
+import { encodeImageFileAsURL } from "@/utils/helper/helper";
 
-type FormProps = {};
+type FormProps = {
+  user: IUser;
+  avatar?: File;
+};
 
 const UserForm: React.FC<FormProps> = (props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const { state, getMe } = useAuth();
+  const [disabled, setDisabled] = useState(true);
 
-  console.log("This is our state", state);
-
-  function handlePasswordClick(ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function handlePasswordClick(
+    ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     ev.preventDefault();
     setIsPasswordVisible(!isPasswordVisible);
   }
 
+  function handleChangeInfoClick(
+    ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
+    ev.preventDefault();
+    setDisabled(false);
+  }
+
   return (
-    <>
-    <StyledUserForm>
-      <Text
-        fontSize="medium"
-        fontWeight="medium"
-        className="text"
-      >
-        Personal Information
-      </Text>
-      <button className="btn__change-info">Change information</button>
+    <Formik
+      initialValues={{ username: props.user.username, email: props.user.email, password: "" }}
+      onSubmit={(values, { setSubmitting }) => {
+        try {
+          setSubmitting(true);
 
-      <Label htmlFor="password" className="label">
-        Your name
-      </Label>
-      <Input
-        size="small"
-        inputType="text"
-        placeholder="Guy Hawkins"
-        id="username"
-        className="input__username"
-        iconName="UserProfile"
-      />
+          // const sussyRes = encodeImageFileAsURL(props.avatar!);
+          // console.log("Yep", sussyRes)
 
-      <Label htmlFor="email" className="label">
-        Your email
-      </Label>
-      <Input
-        size="small"
-        inputType="email"
-        placeholder="kenzi.lawson@example.com"
-        id="email"
-        className="input__email"
-        iconName="Mail"
-      />
-
-      <div className="container">
-        <Text fontSize="medium" fontWeight="medium" className="text__password">
-          Password
-        </Text>
-        <button className="btn__change-password" onClick={(ev) => handlePasswordClick(ev)}>Change password</button>
-      </div>
-
-      {isPasswordVisible && (
-        <>
-          <Label htmlFor="old-password" className="label">
-            New password
-          </Label>
-          <Input
-            size="small"
-            inputType="password"
-            placeholder="New password"
-            id="new-password"
-            className="input__password"
-            iconName="Hide"
-          />
-
-          <Label htmlFor="new-password-reply" className="label">
-            Enter your password again
-          </Label>
-          <Input
-            size="small"
-            inputType="password"
-            placeholder="Password replay"
-            id="new-password-reply"
-            className="input__password"
-            iconName="Hide"
-          />
-          <Text
-            fontSize="medium"
-            fontWeight="medium"
-            className="text"
-            style={{ marginBottom: "40px" }}
-          >
-            Repeat your password without errors
+          setSubmitting(false);
+        } catch (err) {
+          console.log("error user");
+        }
+      }}
+    >
+      {(formik) => (
+        <StyledUserForm>
+          <Text fontSize="medium" fontWeight="medium" className="text">
+            Personal Information
           </Text>
-        </>
-      )}
+          <button className="btn__change-info" onClick={handleChangeInfoClick}>Change information</button>
 
-      <Button type="primary" width="151" height="44">
-        Confirm
-      </Button>
-    </StyledUserForm>
-    </>
+          <Label htmlFor="password" className="label">
+            Your name
+          </Label>
+          <Input
+            size="small"
+            inputType="text"
+            placeholder="Guy Hawkins"
+            id="username"
+            className="input__username"
+            iconName="UserProfile"
+            value={formik.values.username}
+            disabled={disabled}
+          />
+
+          <Label htmlFor="email" className="label">
+            Your email
+          </Label>
+          <Input
+            size="small"
+            inputType="email"
+            placeholder="kenzi.lawson@example.com"
+            id="email"
+            className="input__email"
+            iconName="Mail"
+            value={formik.values.email}
+            disabled={disabled}
+          />
+
+          <div className="container">
+            <Text
+              fontSize="medium"
+              fontWeight="medium"
+              className="text__password"
+            >
+              Password
+            </Text>
+            <button
+              className="btn__change-password"
+              onClick={(ev) => handlePasswordClick(ev)}
+            >
+              Change password
+            </button>
+          </div>
+
+          {isPasswordVisible && (
+            <>
+              <Label htmlFor="old-password" className="label">
+                New password
+              </Label>
+              <Input
+                size="small"
+                inputType="password"
+                placeholder="New password"
+                id="new-password"
+                className="input__password"
+                iconName="Hide"
+              />
+
+              <Label htmlFor="new-password-reply" className="label">
+                Enter your password again
+              </Label>
+              <Input
+                size="small"
+                inputType="password"
+                placeholder="Password replay"
+                id="new-password-reply"
+                className="input__password"
+                iconName="Hide"
+              />
+              <Text
+                fontSize="medium"
+                fontWeight="medium"
+                className="text"
+                style={{ marginBottom: "40px" }}
+              >
+                Repeat your password without errors
+              </Text>
+            </>
+          )}
+
+          <Button type="primary" width="151" height="44">
+            Confirm
+          </Button>
+        </StyledUserForm>
+      )}
+    </Formik>
   );
 };
 

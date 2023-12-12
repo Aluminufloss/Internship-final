@@ -4,8 +4,11 @@ import styled from "styled-components";
 import Logo from "../shared/Logo";
 import Button from "../shared/Button";
 import Search from "../shared/Search";
+import ButtonLink from "../shared/ButtonLink";
 
-type HeaderProps = {};
+type HeaderProps = {
+  isAuth?: boolean;
+};
 
 const Header: React.FC<HeaderProps> = (props) => {
   return (
@@ -14,7 +17,7 @@ const Header: React.FC<HeaderProps> = (props) => {
       <Text fontSize="smallBig" className="text">
         Catalog
       </Text>
-      <Button
+      {!props.isAuth ? <Button
         width="135"
         height="38"
         type="primary"
@@ -22,19 +25,45 @@ const Header: React.FC<HeaderProps> = (props) => {
         fontSize="small"
       >
         Log In/ Sing Up
-      </Button>
-      <Search type="medium" />
+      </Button> : 
+        <div className="btn-group">
+          <ButtonLink className="btn-group__button" href="/cart" iconName="button_cart"/>
+          <ButtonLink className="btn-group__button" href="/cart" iconName="button_save"/>
+          <ButtonLink className="btn-group__button" href="/user" iconName="button_user"/>
+        </div>
+      }
+      <Search type="medium" className="search" />
     </StyledHeader>
   );
 };
 
 const StyledHeader = styled.header`
   height: 115px;
-  margin: 20px 15px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: max-content max-content 1fr;
+  column-gap: 14px;
   align-items: center;
-  flex-wrap: wrap;
+  grid-template-rows: 1fr 1fr;
+
+  .search {
+    grid-column: span 3;
+  }
+
+  .button, .btn-group {
+    justify-self: end;
+  }
+
+  .btn-group__button:not(:last-of-type) {
+    margin-right: 18px;
+  }
+
+  .btn-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 `;
 export default Header;

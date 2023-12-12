@@ -72,8 +72,7 @@ type Action =
 export type UserContextType = {
   state: AuthentificationState;
   login: (email: string, password: string) => void;
-  registration: (email: string, password: string) => void;
-  getMe: () => void;
+  registration: (email: string, password: string, username: string) => void;
   setUser: (user: IUser, isAuth: boolean) => void;
 };
 
@@ -82,6 +81,8 @@ const initialState: UserContextType = {
     user: {
       id: "",
       email: "",
+      username: "",
+      imagePath: "",
     },
     isLoading: false,
     isAuth: false,
@@ -89,7 +90,6 @@ const initialState: UserContextType = {
   },
   login: () => null,
   registration: () => null,
-  getMe: () => null,
   setUser: () => null,
 };
 
@@ -179,23 +179,12 @@ function UserProvider(
     }
   }
 
-  async function registration(email: string, password: string) {
+  async function registration(email: string, password: string, username: string) {
     dispatch({ type: ActionKind.Loading });
     try {
-      const response = await AuthService.registration(email, password);
+      const response = await AuthService.registration(email, password, username);
 
       dispatch({ type: ActionKind.Registration, payload: response.data.user });
-    } catch (err) {
-      console.log("Something wrong");
-    }
-  }
-
-  async function getMe() {
-    dispatch({ type: ActionKind.Loading });
-    try {
-      // const response = await AuthService.getMe();
-
-      // dispatch({ type: ActionKind.GetMe, payload: response.data.user });
     } catch (err) {
       console.log("Something wrong");
     }
@@ -216,7 +205,6 @@ function UserProvider(
         state,
         login,
         registration,
-        getMe,
         setUser,
       }}
     >

@@ -84,6 +84,7 @@ const StyledFooter = styled.footer`
   .map {
     width: 100%;
     height: 160px;
+    border-radius: 6px;
     background-image: url("images/map/map-small.png");
     background-repeat: no-repeat;
     background-size: cover;

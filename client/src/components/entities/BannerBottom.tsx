@@ -30,6 +30,7 @@ const BannerBottom: React.FC<BannerProps> = (props) => {
         color="white"
         type="primary"
         fontSize="small"
+        className="button"
       >
         {props.buttonText}
       </Button>
@@ -45,7 +46,7 @@ const BannerBottom: React.FC<BannerProps> = (props) => {
 };
 
 const StyledBanner = styled.div`
-  width: calc(100% - 30px);
+  width: 100%;
   height: 505px;
   border-radius: 16px;
   padding: 20px 20px 0 20px;
@@ -68,7 +69,13 @@ const StyledBanner = styled.div`
       position: absolute;
       top: -6px;
       right: -8px;
+      z-index: 0;
     }
+  }
+
+  .button {
+    position: relative;
+    z-index: 100;
   }
 
   .title,

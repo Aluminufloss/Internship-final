@@ -21,7 +21,7 @@ const TYPE = {
 
 const Search: React.FC<SearchProps> = (props) => {
   return (
-    <StyledSearch type={props.type ?? "medium"}>
+    <StyledSearch type={props.type ?? "medium"} className={props.className}>
       <input type="Search" placeholder="Search"/>
     </StyledSearch>
   );

@@ -45,11 +45,11 @@ button {
   cursor: not-allowed;
 }
 
-select:disabled,
+/* select:disabled,
 input:disabled {
   background-color: black;
   color: white;
-}
+} */
 
 input {
   border: none;
@@ -63,8 +63,8 @@ select:focus {
   outline-offset: -1px;
 } */
 
-input[type=file] {
-  opacity: 0;
+input[type="file"] {
+  display: none;
 }
 
 input:focus {
@@ -81,7 +81,11 @@ a {
 }
 
 ul {
-  list-style: none;
+  list-style-type: none;
+}
+
+select:focus {
+  border: none;
 }
 
 p,

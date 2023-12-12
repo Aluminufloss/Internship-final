@@ -7,6 +7,8 @@ const tokenService = require("./token-service");
 
 const ApiError = require("../exceptions/api-error");
 
+const fs = require("fs");
+
 class UserService {
   async generateTokens(user) {
     const userDto = new UserDto(user);
@@ -16,7 +18,7 @@ class UserService {
     return { ...tokens, user: userDto };
   }
 
-  async registration(email, password) {
+  async registration(email, password, username) {
     const candidate = await UserModel.findOne({ email });
 
     if (candidate) {
@@ -25,8 +27,10 @@ class UserService {
       );
     }
 
+    const imagePath = `C:\\Users\\nilch\\Desktop\\Internship\\client\\public\\images\\user"\\user-empthy.png`;
+
     const hashPassword = await bcrypt.hash(password, 3);
-    const user = await UserModel.create({ email, password: hashPassword });
+    const user = await UserModel.create({ email, password: hashPassword, username, imagePath });
 
     return this.generateTokens(user);
   }
@@ -77,7 +81,24 @@ class UserService {
     } 
 
     const userDto = new UserDto(user);
+    console.log("User", userDto);
     return { user: userDto };
+  }
+
+  async upload(userID, base64String) {
+    if (!userID) {
+      throw ApiError.BadRequest("Don't have an user id");
+    } 
+
+    if (!base64String) {
+      throw ApiError.BadRequest("Don't have an base64 image string");
+    }
+   
+    const base64Image = base64String.split(';base64,').pop();
+
+    const buffer = Buffer.from(base64Image, "base64");
+
+    fs.writeFileSync(`D:\\avatar_${userID}.png`, buffer);
   }
 }
 

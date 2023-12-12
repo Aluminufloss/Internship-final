@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import { RegistrationValidationSchema } from "@/schema/validation";
 
-
 import { Formik } from "formik";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
@@ -27,7 +26,7 @@ const RegistrationForm: React.FC<FormProps> = (props) => {
       onSubmit={(values, { setSubmitting }) => {
         try {
           setSubmitting(true);
-          registration(values.email, values.password);
+          registration(values.email, values.password, values.username);
           setSubmitting(false);
         } catch (err) {
           console.log("error registration");
@@ -60,20 +59,20 @@ const RegistrationForm: React.FC<FormProps> = (props) => {
 
           <Input
             size="small"
-            inputType="email"
-            placeholder="Email"
+            inputType="text"
+            placeholder="Username"
             id="username"
             iconName="UserProfile"
-            className="input__mail"
-            value={formik.values.email}
+            className="input__username"
+            value={formik.values.username}
             onChange={formik.handleChange}
           />
           <Label htmlFor="email" className="label">
-            Enter your email
+            Enter your username
           </Label>
 
-          {formik.touched.email && formik.errors.email ? (
-            <div>{formik.errors.email}</div>
+          {formik.touched.username && formik.errors.username ? (
+            <div>{formik.errors.username}</div>
           ) : null}
 
           <Input
@@ -125,6 +124,7 @@ const StyledRegistrationForm = styled.form`
   display: flex;
   flex-direction: column;
   margin: 0 15px 60px;
+  width: 100%;
 
   .text {
     margin-bottom: 30px;

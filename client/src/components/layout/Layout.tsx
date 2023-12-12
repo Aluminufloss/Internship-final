@@ -18,6 +18,7 @@ const StyledLayout = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-`
+  margin: 20px 15px 0 15px;
+`;
 
 export default Layout;

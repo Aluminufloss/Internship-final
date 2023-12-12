@@ -1,5 +1,6 @@
 const ApiError = require("../exceptions/api-error");
 const userSevice = require("../service/user-service");
+
 const { validationResult } = require("express-validator");
 
 class UserContoller {
@@ -12,8 +13,8 @@ class UserContoller {
         );
       }
 
-      const { email, password } = req.body;
-      const userData = await userSevice.registration(email, password);
+      const { email, password, username } = req.body;
+      const userData = await userSevice.registration(email, password, username);
 
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -90,14 +91,24 @@ class UserContoller {
 
   async getMe(req, res, next) {
     try {
-      console.log("nope ", req.headers.token);
       const accessToken = req.headers.authorization.split(" ")[1];
       const refreshToken = req.headers.token;
       const userData = await userSevice.getUser(req.user);
 
-      console.log("yes ", accessToken);
-
       return res.json({ user: userData.user, refreshToken, accessToken });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async uploadImage(req, res, next) {
+    try {
+      const userID = req.body.id;
+      const base64String = req.body.image;
+
+      await userSevice.upload(userID, base64String);
+
+      return res.json("Success");
     } catch (err) {
       next(err);
     }

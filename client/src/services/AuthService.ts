@@ -12,11 +12,13 @@ export default class AuthService {
 
   static async registration(
     email: string,
-    password: string
+    password: string,
+    username: string,
   ): Promise<AxiosResponse<AuthRespone>> {
     return $api.post<AuthRespone>("/registration", {
       email,
       password,
+      username,
     });
   }
 
@@ -28,17 +30,11 @@ export default class AuthService {
     refreshToken: string,
     accessToken: string,
   ): Promise<AxiosResponse<AuthRespone>> {
-    return $api.post("/user", { refreshToken, accessToken });
+    return $api.post("/getMe", { refreshToken, accessToken });
   }
 
   static async refresh(
   ): Promise<AxiosResponse<AuthRespone>> {
     return $api.get("/refresh");
-  }
-
-  static async getAccessToken(
-    refreshToken: string
-  ): Promise<AxiosResponse<AuthRespone>> {
-    return $api.post("/access", { refreshToken });
   }
 }

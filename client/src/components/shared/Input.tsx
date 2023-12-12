@@ -13,6 +13,7 @@ type InputProps = {
   icon?: string;
   name?: string;
   value?: string;
+  disabled?: boolean;
   onChange?: (newValue: string) => void;
 };
 
@@ -44,6 +45,8 @@ const Input: React.FC<InputProps> = (props) => {
       name={props.name}
       value={props.value}
       onChange={props.onChange}
+      type={props.inputType ?? "text"}
+      disabled={props.disabled ?? false}
     />
   );
 };

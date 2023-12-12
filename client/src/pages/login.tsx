@@ -4,10 +4,13 @@ import Footer from "@/components/widgets/Footer";
 import Header from "@/components/widgets/Header";
 import React from "react";
 import Layout from "@/components/layout/Layout";
+import { useAuth } from "@/Contexts/UserContext";
 
 type Props = {};
 
 const Login: React.FC<Props> = (props) => {
+  const { state, setUser } = useAuth();
+  console.log("Suka ", state.user);
   return (
     <Layout>
       <Header />

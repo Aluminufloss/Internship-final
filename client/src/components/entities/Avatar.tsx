@@ -2,20 +2,35 @@ import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import ButtonIcon from "./ButtonIcon";
+import { encodeImageFileAsURL } from "@/utils/helper/helper";
 
-type AvatarProps = {};
+type AvatarProps = {
+  avatar: File;
+  uploadPhoto: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  userID: string;
+};
+
+// const photo = props.avatar ? URL.createObjectURL(props.avatar) : "/images/user/user-empthy.png"
+// // console.log("Photo", photo);
+
+// if (typeof props.avatar !== 'string' && props.avatar !== undefined) {
+//   const sussyRes = encodeImageFileAsURL(props.avatar!);
+//   console.log("Yep", sussyRes);
+// }
 
 const Avatar: React.FC<AvatarProps> = (props) => {
+  const photo = "";
+
   return (
     <StyledAvatar>
     <Image
-        src="/images/user/user-empthy.png"
+        src={photo}
         width={154}
         height={154}
         alt="Girl's reading a book"
         className="image"
-      />
-      <ButtonIcon />
+    />
+      <ButtonIcon uploadPhoto={props.uploadPhoto}/>
     </StyledAvatar>
   );
 };
