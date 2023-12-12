@@ -116,6 +116,7 @@ class UserContoller {
   async changeInfo(req, res, next) {
     try {
       const { user, newEmail, newPassword, newUsername } = req.body;
+      console.log("afdasfadssffdssfdsfd", req.body);
 
       const userWithNewData = await userSevice.change(user, newEmail, newPassword, newUsername);
 

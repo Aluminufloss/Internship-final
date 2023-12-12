@@ -18,6 +18,10 @@ type FormProps = {
 const UserForm: React.FC<FormProps> = (props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [disabled, setDisabled] = useState(true);
+  const [disabledButton, setDisabledButton] = useState(true);
+
+  const [initialUsername, setInitialUsername] = useState(props.user.username);
+  const [initialEmail, setInitialEmail] = useState(props.user.email);
 
   function handlePasswordClick(
     ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -30,22 +34,36 @@ const UserForm: React.FC<FormProps> = (props) => {
     ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     ev.preventDefault();
-    setDisabled(false);
+    setDisabled(!disabled);
   }
 
   return (
     <Formik
-      initialValues={{ username: props.user.username, email: props.user.email, password: "" }}
+      initialValues={{
+        username: "",
+        email: "",
+        password: "",
+      }}
       onSubmit={(values, { setSubmitting }) => {
         try {
           setSubmitting(true);
+
+          if (
+            values.username === initialUsername &&
+            values.email === initialEmail &&
+            values.password === ""
+          ) {
+            return;
+          }
+
+          console.log("Yes");
 
           // const sussyRes = encodeImageFileAsURL(props.avatar!);
           // console.log("Yep", sussyRes)
 
           setSubmitting(false);
         } catch (err) {
-          console.log("error user");
+          console.log("error user", err);
         }
       }}
     >
@@ -54,20 +72,24 @@ const UserForm: React.FC<FormProps> = (props) => {
           <Text fontSize="medium" fontWeight="medium" className="text">
             Personal Information
           </Text>
-          <button className="btn__change-info" onClick={handleChangeInfoClick}>Change information</button>
+          <button className="btn__change-info" onClick={handleChangeInfoClick}>
+            Change information
+          </button>
 
-          <Label htmlFor="password" className="label">
+          <Label htmlFor="username" className="label">
             Your name
           </Label>
           <Input
+            iconName="UserProfile"
             size="small"
             inputType="text"
-            placeholder="Guy Hawkins"
             id="username"
             className="input__username"
-            iconName="UserProfile"
-            value={formik.values.username}
             disabled={disabled}
+            placeholder={initialUsername}
+            color="dark"
+            value={formik.values.username}
+            onChange={formik.handleChange}
           />
 
           <Label htmlFor="email" className="label">
@@ -76,11 +98,13 @@ const UserForm: React.FC<FormProps> = (props) => {
           <Input
             size="small"
             inputType="email"
-            placeholder="kenzi.lawson@example.com"
+            placeholder={initialEmail}
             id="email"
             className="input__email"
             iconName="Mail"
+            color="dark"
             value={formik.values.email}
+            onChange={formik.handleChange}
             disabled={disabled}
           />
 
@@ -111,6 +135,7 @@ const UserForm: React.FC<FormProps> = (props) => {
                 placeholder="New password"
                 id="new-password"
                 className="input__password"
+                onChange={formik.handleChange}
                 iconName="Hide"
               />
 
@@ -123,6 +148,7 @@ const UserForm: React.FC<FormProps> = (props) => {
                 placeholder="Password replay"
                 id="new-password-reply"
                 className="input__password"
+                onChange={formik.handleChange}
                 iconName="Hide"
               />
               <Text
@@ -183,6 +209,10 @@ const StyledUserForm = styled.form`
 
   .text {
     margin-top: 10px;
+  }
+
+  input::placeholder {
+    color: ${(props) => props.theme.colors.dark};
   }
 `;
 
