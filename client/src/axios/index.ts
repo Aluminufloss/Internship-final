@@ -32,17 +32,19 @@ $api.interceptors.response.use((config) => {
     originalRequest._isRetry = true;
     try {
       const { refreshToken } = JSON.parse(originalRequest.data);
-      console.log("Refresh", refreshToken);
+      console.log("Yep")
 
       const response = await axios.post<AuthRespone>(`${API_URL}/refresh`, { withCredentials: true, refreshToken });
       const token = response.data.accessToken;
+
+      console.log("Datas", response.data);
 
       originalRequest.headers.Authorization = `Bearer ${token}`;
       originalRequest.headers.token = response.data.refreshToken;
 
       return $api.request(originalRequest);
     } catch (err) {
-      console.log("Ошибка перехватчика на 401 статус-код");
+      console.log("Ошибка перехватчика на 401 статус-код", err);
     }
   }
   throw error;

@@ -19,6 +19,7 @@ router.post("/logout", userController.logout);
 router.post("/getMe", authMiddleware, userController.getMe);
 router.post("/upload", userController.uploadImage);
 router.post("/refresh", userController.refresh);
+router.post("/change", userController.changeInfo);
 
 router.post("/book", bookController.createBook);
 

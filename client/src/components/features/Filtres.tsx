@@ -21,6 +21,7 @@ const SIZE = {
 const Filtres: React.FC<FilterProps> = (props) => {
   return (
     <>
+      <StyledFilters className="filter__group">
       <Text
         color="dark"
         fontWeight="bold"
@@ -29,7 +30,6 @@ const Filtres: React.FC<FilterProps> = (props) => {
       >
         Catalog
       </Text>
-      <StyledFilters className="filter__group">
         <div className="filter__select--container">
           <select className="filter__select--genre">
             <option value="Genre" selected>
@@ -59,6 +59,7 @@ const Filtres: React.FC<FilterProps> = (props) => {
           <select className="filter__select--price">
             <option value="Satire">Satire</option>
           </select>
+          <span className="filter__select--icon"></span>
         </div>
         <div className="filter__select--container">
           <select className="filter__select--custom">
@@ -92,7 +93,7 @@ const StyledFilters = styled.div`
     height: 48px;
     position: relative;
     width: 100%;
-    padding-left: 15px;
+    padding: 10px 0 10px 15px;
     background-color: ${(props) => props.theme.colors.light};
     border-radius: 16px;
     border: none;
@@ -100,10 +101,13 @@ const StyledFilters = styled.div`
     color: ${(props) => props.theme.colors.darkBlue};
     font-size: ${(props) => props.theme.colors.smallBig};
     font-weight: 500;
+  }
 
-    .filter__select--container {
+  .filter__select--container {
       position: relative;
       width: 100%;
+      height: 48px;
+      margin-bottom: 20px;
     }
 
     .filter__select--icon {
@@ -113,10 +117,13 @@ const StyledFilters = styled.div`
       width: 24px;
       height: 24px;
       background: transparent;
-      background-image: url("/images/icons/select.svg");
+      background-image: url("/images/icons/Select.svg");
       background-repeat: no-repeat;
     }
-  }
+    
+    .filter__text {
+      align-self: flex-start;
+    }
 `;
 
 export default Filtres;

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
 
+import { cookies } from "next/headers";
+
 import Layout from "@/components/layout/Layout";
 
 import Footer from "@/components/widgets/Footer";
@@ -67,27 +69,21 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       refreshToken as string,
       accessToken as string
     );
-    console.log("Resp", response.data);
+
     const { user, refreshToken: rToken, accessToken: aToken } = response.data;
 
     if (rToken !== undefined) {
-      ctx.res.setHeader("Set-cookie", cookie.serialize("refreshToken", ""));
-
-      ctx.res.setHeader(
-        "Set-cookie",
-        cookie.serialize("refreshToken", rToken, {
-          httpOnly: true,
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        })
-      );
-
-      ctx.res.setHeader(
-        "Set-cookie",
+      ctx.res.setHeader("Set-Cookie", [
+        `refreshToken=deleted; Max-Age=0`,
         cookie.serialize("accessToken", aToken, {
           httpOnly: true,
           maxAge: 1 * 1 * 15 * 60 * 1000,
-        })
-      );
+        }),
+        cookie.serialize("refreshToken", rToken, {
+          httpOnly: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+        }),
+      ]);
     }
 
     return {

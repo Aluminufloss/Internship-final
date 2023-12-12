@@ -52,7 +52,6 @@ class UserContoller {
     }
   }
 
-  // @handleCtrlErrors
   async logout(req, res, next) {
     try {
       const { refreshToken } = req.cookies;
@@ -109,6 +108,18 @@ class UserContoller {
       await userSevice.upload(userID, base64String);
 
       return res.json("Success");
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async changeInfo(req, res, next) {
+    try {
+      const { user, newEmail, newPassword, newUsername } = req.body;
+
+      const userWithNewData = await userSevice.change(user, newEmail, newPassword, newUsername);
+
+      return res.json(userWithNewData);
     } catch (err) {
       next(err);
     }

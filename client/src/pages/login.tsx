@@ -10,7 +10,7 @@ type Props = {};
 
 const Login: React.FC<Props> = (props) => {
   const { state, setUser } = useAuth();
-  console.log("Suka ", state.user);
+
   return (
     <Layout>
       <Header />

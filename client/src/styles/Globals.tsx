@@ -86,6 +86,7 @@ ul {
 
 select:focus {
   border: none;
+  outline: none;
 }
 
 p,

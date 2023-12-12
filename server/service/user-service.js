@@ -27,7 +27,7 @@ class UserService {
       );
     }
 
-    const imagePath = `C:\\Users\\nilch\\Desktop\\Internship\\client\\public\\images\\user"\\user-empthy.png`;
+    const imagePath = `C:\\Users\\nilch\\Desktop\\Internship\\client\\public\\images\\user\\user-empthy.png`;
 
     const hashPassword = await bcrypt.hash(password, 3);
     const user = await UserModel.create({ email, password: hashPassword, username, imagePath });
@@ -99,6 +99,34 @@ class UserService {
     const buffer = Buffer.from(base64Image, "base64");
 
     fs.writeFileSync(`D:\\avatar_${userID}.png`, buffer);
+  }
+
+
+  async change(user, email, password, username) {
+    const userFromDB = await UserModel.findOne({ email: user.email });
+    if (!userFromDB) {
+      throw ApiError.BadRequest("Пользователь с таким email не был найден");
+    }
+
+    const newEmail = email ?? userFromDB.email;
+    const newUserName = username ?? userFromDB.username;
+    const newPassword = password ?? "";
+
+    if (newPassword) {
+      const isPassEqual = await bcrypt.compare(newPassword, userFromDB.password);
+
+      if (isPassEqual) {
+        throw ApiError.BadRequest("Новый пароль совпадает с старым");
+      }
+        
+      const hashPassword = await bcrypt.hash(newPassword, 3);
+
+      await UserModel.updateOne({ email: userFromDB.email }, { password: hashPassword } );
+    }
+
+    const userWithNewData = await UserModel.updateOne({ email: user.email }, { email: newEmail, username: newUserName }, { new: true });
+    
+    return userWithNewData;
   }
 }
 

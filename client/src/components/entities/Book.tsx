@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Text from "../shared/Text";
 import Button from "../shared/Button";
+import StarRating from "../features/StarRating";
 
 const Book: React.FC = (props) => {
   return (
@@ -11,7 +12,7 @@ const Book: React.FC = (props) => {
       </div>
       <Text className="book__title" fontSize="smallBig" fontWeight="medium" color="darkBlue">The Chronicles of Narnia</Text>
       <Text className="book__author" fontSize="small" fontWeight="semiBold" color="darkGrey">C. S. Lewis</Text>
-      <div className="book__rating">312</div>
+      <StarRating className="book__rating"/>
       <Button
         className="book__buy-btn"
         type="primary"
@@ -35,7 +36,7 @@ const StyledBook = styled.li`
     &__image {
       width: 100%;
       height: 58%;
-      background-image: url("images/books/cover.png");
+      background-image: url("images/books/6574ebeec35eb32f80655183.png");
       background-repeat: no-repeat;
       background-size: fill;
       background-position: center center;
@@ -49,6 +50,10 @@ const StyledBook = styled.li`
     &__author {
 
       margin-bottom: 12px;
+    }
+
+    &__rating {
+      margin-bottom: 16px;
     }
   }
 `;
