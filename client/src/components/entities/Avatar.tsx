@@ -1,36 +1,31 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
+
 import ButtonIcon from "./ButtonIcon";
-import { encodeImageFileAsURL } from "@/utils/helper/helper";
+
+import { DEFAULT_IMAGE } from "@/utils/constant/constant";
 
 type AvatarProps = {
-  avatar: File;
+  avatar: string;
   uploadPhoto: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  userID: string;
 };
 
-// const photo = props.avatar ? URL.createObjectURL(props.avatar) : "/images/user/user-empthy.png"
-// // console.log("Photo", photo);
-
-// if (typeof props.avatar !== 'string' && props.avatar !== undefined) {
-//   const sussyRes = encodeImageFileAsURL(props.avatar!);
-//   console.log("Yep", sussyRes);
-// }
-
 const Avatar: React.FC<AvatarProps> = (props) => {
-  const photo = "";
-
   return (
     <StyledAvatar>
-    <Image
-        src={photo}
+      <Image
+        src={props.avatar}
+        onError={(e) => {
+          (e.target as HTMLImageElement).onerror = null;
+          (e.target as HTMLImageElement).src = DEFAULT_IMAGE.default;
+        }}
         width={154}
         height={154}
-        alt="Girl's reading a book"
+        alt="Your image"
         className="image"
-    />
-      <ButtonIcon uploadPhoto={props.uploadPhoto}/>
+      />
+      <ButtonIcon uploadPhoto={props.uploadPhoto} />
     </StyledAvatar>
   );
 };
@@ -45,6 +40,11 @@ const StyledAvatar = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  .image {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 export default Avatar;

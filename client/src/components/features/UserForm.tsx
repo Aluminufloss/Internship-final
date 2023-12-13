@@ -10,18 +10,26 @@ import Button from "../shared/Button";
 import { IUser } from "@/models/response/Auth/IUser";
 import { encodeImageFileAsURL } from "@/utils/helper/helper";
 
+import { RegistrationValidationSchema } from "@/schema/validation";
+
+import { useAuth } from "@/Contexts/UserContext";
+
 type FormProps = {
   user: IUser;
   avatar?: File;
 };
 
 const UserForm: React.FC<FormProps> = (props) => {
+  const { changeInformation, state } = useAuth();
+  
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [disabledButton, setDisabledButton] = useState(true);
 
   const [initialUsername, setInitialUsername] = useState(props.user.username);
   const [initialEmail, setInitialEmail] = useState(props.user.email);
+
+  const [isValidated, setIsValidated] = useState(false);
 
   function handlePasswordClick(
     ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -44,7 +52,8 @@ const UserForm: React.FC<FormProps> = (props) => {
         email: "",
         password: "",
       }}
-      onSubmit={(values, { setSubmitting }) => {
+      // validationSchema={RegistrationValidationSchema}
+      onSubmit={async (values, { setSubmitting }) => {
         try {
           setSubmitting(true);
 
@@ -53,17 +62,20 @@ const UserForm: React.FC<FormProps> = (props) => {
             values.email === initialEmail &&
             values.password === ""
           ) {
+            console.log("sukaddd")
             return;
           }
 
+          await changeInformation(state.user, values.username, values.email, values.password);
+
           console.log("Yes");
 
-          // const sussyRes = encodeImageFileAsURL(props.avatar!);
-          // console.log("Yep", sussyRes)
+          // const im = encodeImageFileAsURL(props.avatar!);
+          // console.log("Yep", im)
 
           setSubmitting(false);
         } catch (err) {
-          console.log("error user", err);
+          console.log("error change information", err);
         }
       }}
     >
@@ -134,6 +146,7 @@ const UserForm: React.FC<FormProps> = (props) => {
                 inputType="password"
                 placeholder="New password"
                 id="new-password"
+                color="dark"
                 className="input__password"
                 onChange={formik.handleChange}
                 iconName="Hide"
@@ -146,6 +159,7 @@ const UserForm: React.FC<FormProps> = (props) => {
                 size="small"
                 inputType="password"
                 placeholder="Password replay"
+                color="dark"
                 id="new-password-reply"
                 className="input__password"
                 onChange={formik.handleChange}

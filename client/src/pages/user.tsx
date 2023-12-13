@@ -16,6 +16,8 @@ import Avatar from "@/components/entities/Avatar";
 import { useAuth } from "@/Contexts/UserContext";
 import AuthService from "@/services/AuthService";
 import { IUser } from "@/models/response/Auth/IUser";
+import { DEFAULT_IMAGE } from "@/utils/constant/constant";
+import { encodeImageToBase64String } from "@/utils/helper/helper";
 
 // import { getServerSideProps } from "@/utils/helper/helper";
 
@@ -27,18 +29,20 @@ type Props = {
 const User: React.FC<Props> = (props) => {
   const { state, setUser } = useAuth();
   const [avatar, setAvatar] = useState<File>();
+  const [decodedImage, setDecodedImage] = useState<string>();
 
   useEffect(() => {
     (async () => {
       setUser(props.user, props.isAuth);
-      // const image = getUserAvatar(props.user.id);
     })();
   }, []);
 
-  function handleUploadPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleUploadPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
-    const file = e.target.files![0];
-    setAvatar(file);
+    const image = e.target.files![0];
+    const imageBase64 = await encodeImageToBase64String(image);
+    setAvatar(image);
+    setDecodedImage(imageBase64);
   }
 
   return (
@@ -48,8 +52,7 @@ const User: React.FC<Props> = (props) => {
         <>
           <Avatar
             uploadPhoto={handleUploadPhoto}
-            avatar={avatar!}
-            userID={state.user.id!}
+            avatar={props.user.imagePath!}
           />
           <UserForm user={state.user} avatar={avatar!} />
         </>

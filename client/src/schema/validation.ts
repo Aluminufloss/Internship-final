@@ -8,9 +8,10 @@ export const RegistrationValidationSchema = Yup.object().shape({
     .required("Required"),
   username: Yup.string()
     .required("Required")
-    .max(40, "Password is too big - should be less than 40 chars."),
+    .min(5, "Username is too short - should be 5 chars minimum.")
+    .max(40, "Username is too big - should be less than 40 chars."),
   password: Yup.string()
-    .required()
+    .required("Required")
     .min(8, "Password is too short - should be 8 chars minimum.")
     .max(40, "Password is too big - should be less than 40 chars.")
     .minLowercase(1, "password must contain at least 1 lower case letter")

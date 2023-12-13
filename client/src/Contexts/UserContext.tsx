@@ -18,21 +18,9 @@ enum ActionKind {
   SetUser = "user/setUser",
   Loading = "loading",
   Registration = "user/registration",
+  ChangeInformation = "user/change",
 }
 
-type PayloadKind = {
-  user?: IUser;
-  error?: string;
-  email?: string;
-  isAuth?: boolean;
-};
-
-// type Action = {
-//   type: ActionKind;
-//   payload?: PayloadKind;
-// };
-
-//---------------------------------------//
 type LoginAction = {
   type: ActionKind.Login;
   payload: IUser;
@@ -61,19 +49,32 @@ type Loading = {
   payload?: string;
 };
 
+type ChangeInformation = {
+  type: ActionKind.ChangeInformation;
+  payload: {
+    user: IUser;
+  };
+};
+
 type Action =
   | LoginAction
   | RegistrationAction
   | LoginRejected
   | SetUser
-  | Loading;
-//---------------------------------------//
+  | Loading
+  | ChangeInformation;
 
 export type UserContextType = {
   state: AuthentificationState;
   login: (email: string, password: string) => void;
   registration: (email: string, password: string, username: string) => void;
   setUser: (user: IUser, isAuth: boolean) => void;
+  changeInformation: (
+    user: IUser,
+    newUsername: string,
+    newEmail: string,
+    newPassword: string
+  ) => void;
 };
 
 const initialState: UserContextType = {
@@ -91,6 +92,7 @@ const initialState: UserContextType = {
   login: () => null,
   registration: () => null,
   setUser: () => null,
+  changeInformation: () => null,
 };
 
 const UserContext = createContext<UserContextType>(initialState);
@@ -118,15 +120,6 @@ function userReducer(
       };
     }
 
-    // case ActionKind.GetMe: {
-    //   return {
-    //     ...state,
-    //     isAuth: true,
-    //     isLoading: false,
-    //     user: action.payload as IUser,
-    //   };
-    // }
-
     case ActionKind.SetUser: {
       return {
         ...state,
@@ -148,6 +141,15 @@ function userReducer(
     case ActionKind.Loading: {
       return {
         ...state,
+        isLoading: true,
+      };
+    }
+
+    case ActionKind.ChangeInformation: {
+      return {
+        ...state,
+        user: action.payload.user,
+        isAuth: true,
         isLoading: true,
       };
     }
@@ -176,13 +178,22 @@ function UserProvider(
       dispatch({ type: ActionKind.Login, payload: response.data.user });
     } catch (err) {
       console.log("Something wrong");
+      throw err;
     }
   }
 
-  async function registration(email: string, password: string, username: string) {
+  async function registration(
+    email: string,
+    password: string,
+    username: string
+  ) {
     dispatch({ type: ActionKind.Loading });
     try {
-      const response = await AuthService.registration(email, password, username);
+      const response = await AuthService.registration(
+        email,
+        password,
+        username
+      );
 
       dispatch({ type: ActionKind.Registration, payload: response.data.user });
     } catch (err) {
@@ -199,6 +210,28 @@ function UserProvider(
     }
   }
 
+  async function changeInformation(
+    user: IUser,
+    newUsername: string,
+    newEmail: string,
+    newPassword: string
+  ) {
+    dispatch({ type: ActionKind.Loading });
+    try {
+      const response = await AuthService.changeInformation(
+        user,
+        newUsername,
+        newEmail,
+        newPassword,
+      );
+
+      dispatch({ type: ActionKind.ChangeInformation, payload: { user: response.data.user } });
+    } catch (err) {
+      console.log("Something wrong with changing your personal information");
+      throw err;
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -206,6 +239,7 @@ function UserProvider(
         login,
         registration,
         setUser,
+        changeInformation,
       }}
     >
       {children}

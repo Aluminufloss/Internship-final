@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Formik } from "formik";
+import { useRouter } from 'next/router';
 
 import { useAuth } from "@/Contexts/UserContext";
 
@@ -13,17 +14,23 @@ type FormProps = {};
 
 const LoginForm: React.FC<FormProps> = (props) => {
   const { login } = useAuth();
+  const router = useRouter();
 
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
-      onSubmit={(values, { setSubmitting }) => {
+      onSubmit={async (values, { setSubmitting }) => {
         try {
+          if (values.email === "" || values.password === "") {
+            return;
+          } 
           setSubmitting(true);
-          login(values.email, values.password);
+          await login(values.email, values.password);
           setSubmitting(false);
+          router.push('/');
         } catch (err) {
-          console.log("error login");
+          setSubmitting(false);
+          console.log("Error login");
         }
       }}
     >

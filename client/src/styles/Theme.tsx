@@ -12,7 +12,9 @@ const theme = {
     green: "#BFCC94",
     darkGreen: "#8d9f4f",
     error: "#ED2E7E",
+    errorLight: "#FFF2F7",
     success: "#00BA88",
+    successLight: "#F3FDFA"
   },
 
   fontSizes: {

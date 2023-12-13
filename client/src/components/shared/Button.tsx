@@ -15,6 +15,7 @@ type ButtonProps = {
   width: string;
   height: string;
   type: "primary" | "secondary";
+  onClick?: (ev: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const TYPE = {
@@ -27,7 +28,7 @@ const TYPE = {
       background-color: ${(props) => `${props.theme.colors.dark}`};
     }
 
-    &:focus {
+    &:active {
       color: ${(props) => `${props.theme.colors.white}`};
       background-color: ${(props) => `${props.theme.colors.darkBlue}`};
       border: 8px solid ${(props) => `${props.theme.colors.lightGrey}`};

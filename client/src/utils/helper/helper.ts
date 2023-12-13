@@ -23,17 +23,20 @@ export function getIsMobile(): boolean {
   return !window.matchMedia("(min-width: 720px)").matches;
 }
 
-export function encodeImageFileAsURL(image: File) {
+export function encodeImageToBase64String<T extends File>(image: T): Promise<string> {
   const reader = new FileReader();
 
-  reader.onloadend = function () {
-    console.log("RESULT", reader.result);
-    return reader.result;
-  };
+  return new Promise<string>((resolve, reject) => {
+    reader.onerror = () => {
+      reader.abort();
+      reject(new Error("Problem parsing input file."));
+    };
 
-  reader.readAsDataURL(image);
-}
+    reader.onload = () => {
 
-export function getUserAvatar(id: string) {
-  
+      resolve(reader.result as string);
+    };
+
+    reader.readAsDataURL(image);
+  });
 }

@@ -1,16 +1,30 @@
 import Text from "@/components/shared/Text";
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Logo from "../shared/Logo";
 import Button from "../shared/Button";
 import Search from "../shared/Search";
 import ButtonLink from "../shared/ButtonLink";
+import { useRouter } from "next/router";
 
 type HeaderProps = {
   isAuth?: boolean;
 };
 
 const Header: React.FC<HeaderProps> = (props) => {
+  const [formType, setFormType] = useState("login");
+  const router = useRouter();
+
+  function handleClick(ev: React.MouseEvent<HTMLButtonElement>) {
+    if (formType === "login") {
+      setFormType("registration");
+      router.push("/registration");
+    } else {
+      setFormType("login");
+      router.push("/login");
+    }
+  }
+
   return (
     <StyledHeader>
       <Logo type="smallWhite" className="logo" />
@@ -23,8 +37,9 @@ const Header: React.FC<HeaderProps> = (props) => {
         type="primary"
         className="button"
         fontSize="small"
+        onClick={ev => handleClick(ev)}
       >
-        Log In/ Sing Up
+        Log In/Sign Up
       </Button> : 
         <div className="btn-group">
           <ButtonLink className="btn-group__button" href="/cart" iconName="button_cart"/>

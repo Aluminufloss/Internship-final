@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { useRouter } from "next/router";
 
 import { RegistrationValidationSchema } from "@/schema/validation";
 
@@ -12,22 +13,33 @@ import Text from "../shared/Text";
 import Input from "../shared/Input";
 import Label from "../shared/label";
 import Button from "../shared/Button";
+
 import { useAuth } from "@/Contexts/UserContext";
+
 
 type FormProps = {};
 
 const RegistrationForm: React.FC<FormProps> = (props) => {
+  const [isValidated, setIsValidated] = useState(false);
+
   const { registration } = useAuth();
+  const router = useRouter();
 
   return (
     <Formik
-      initialValues={{ email: "", username: "", password: "", passwordConfirm: "" }}
+      initialValues={{
+        email: "",
+        username: "",
+        password: "",
+        passwordConfirm: "",
+      }}
       validationSchema={RegistrationValidationSchema}
       onSubmit={(values, { setSubmitting }) => {
         try {
           setSubmitting(true);
           registration(values.email, values.password, values.username);
           setSubmitting(false);
+          router.push("/");
         } catch (err) {
           console.log("error registration");
         }
@@ -45,17 +57,26 @@ const RegistrationForm: React.FC<FormProps> = (props) => {
             placeholder="Email"
             id="email"
             iconName="Mail"
-            className="input__mail"
+            className={
+              !isValidated || formik.values.email === ""
+                ? "input__mail"
+                : formik.errors.email
+                ? "input__mail validation__input--error"
+                : "input__mail validation__input--success"
+            }
             value={formik.values.email}
             onChange={formik.handleChange}
           />
-          <Label htmlFor="email" className="label">
-            Enter your email
-          </Label>
 
-          {formik.touched.email && formik.errors.email ? (
-            <div>{formik.errors.email}</div>
-          ) : null}
+          <Label htmlFor="email" className="label">
+            {!isValidated || formik.values.email === "" ? (
+              <span className="validation__empthy">Enter your email</span>
+            ) : formik.errors.email ? (
+                  <span className="validation__error">{formik.errors.email}</span>
+                ) : (
+                  <span className="validation__success">Email is correct</span>
+                )}
+          </Label>
 
           <Input
             size="small"
@@ -63,17 +84,25 @@ const RegistrationForm: React.FC<FormProps> = (props) => {
             placeholder="Username"
             id="username"
             iconName="UserProfile"
-            className="input__username"
             value={formik.values.username}
             onChange={formik.handleChange}
+            className={
+              !isValidated
+                ? "input__username"
+                : formik.errors.username
+                ? "input__username validation__input--error"
+                : "input__username validation__input--success"
+            }
           />
-          <Label htmlFor="email" className="label">
-            Enter your username
+          <Label htmlFor="username" className="label">
+            {!isValidated || formik.values.username === "" ? (
+              <span className="validation__empthy">Enter your username</span>
+            ) : formik.errors.username ? (
+                  <span className="validation__error">{formik.errors.username}</span>
+                ) : (
+                  <span className="validation__success">Username is correct</span>
+                )}
           </Label>
-
-          {formik.touched.username && formik.errors.username ? (
-            <div>{formik.errors.username}</div>
-          ) : null}
 
           <Input
             size="small"
@@ -81,17 +110,25 @@ const RegistrationForm: React.FC<FormProps> = (props) => {
             placeholder="Password"
             id="password"
             iconName="Hide"
-            className="input__password"
             value={formik.values.password}
             onChange={formik.handleChange}
+            className={
+              !isValidated
+                ? "input__password"
+                : formik.errors.password
+                ? "input__password validation__input--error"
+                : "input__password validation__input--success"
+            }
           />
           <Label htmlFor="password" className="label">
-            Enter your password
+            {!isValidated || formik.values.password === "" ? (
+              <span className="validation__empthy">Enter your password</span>
+            ) : formik.errors.password ? (
+                  <span className="validation__error">{formik.errors.password}</span>
+                ) : (
+                  <span className="validation__success">Password is correct</span>
+                )}
           </Label>
-
-          {formik.touched.password && formik.errors.password ? (
-            <div>{formik.errors.password}</div>
-          ) : null}
 
           <Input
             size="small"
@@ -99,19 +136,32 @@ const RegistrationForm: React.FC<FormProps> = (props) => {
             placeholder="Password replay"
             id="passwordConfirm"
             iconName="Hide"
-            className="input__password"
             value={formik.values.passwordConfirm}
             onChange={formik.handleChange}
+            className={
+              !isValidated
+                ? "input__password"
+                : formik.errors.password
+                ? "input__password validation__input--error"
+                : "input__password validation__input--success"
+            }
           />
-          <Label htmlFor="password" className="label">
-            Repeat your password without errors
+          <Label htmlFor="passwordConfirm" className="label">
+            {!isValidated || formik.values.passwordConfirm === "" ? (
+              <span className="validation__empthy">Repeat your password without errors</span>
+            ) : formik.errors.passwordConfirm ? (
+                  <span className="validation__error">{formik.errors.passwordConfirm}</span>
+                ) : (
+                  <span className="validation__success">Passwords aren't match</span>
+                )}
           </Label>
 
-          {formik.touched.passwordConfirm && formik.errors.passwordConfirm ? (
-            <div>{formik.errors.passwordConfirm}</div>
-          ) : null}
-
-          <Button type="primary" width="151" height="44">
+          <Button
+            type="primary"
+            width="151"
+            height="44"
+            onClick={(ev) => setIsValidated(true)}
+          >
             Sing Up
           </Button>
         </StyledRegistrationForm>
@@ -140,6 +190,62 @@ const StyledRegistrationForm = styled.form`
 
   & label:last-of-type {
     margin-bottom: 40px;
+  }
+
+  .validation {
+    &__error {
+      color: ${(props) => props.theme.colors.error};
+      font-size: ${(props) => props.theme.fontSizes.smallBig};
+      font-weight: ${(props) => props.theme.fontWeights.normal};
+    }
+
+    &__success {
+      color: ${(props) => props.theme.colors.success};
+      font-size: ${(props) => props.theme.fontSizes.smallBig};
+      font-weight: ${(props) => props.theme.fontWeights.normal};
+    }
+
+    &__input--success {
+      border: 2px solid ${(props) => props.theme.colors.success};
+      background-color: ${(props) => props.theme.colors.successLight};
+
+      & span {
+        color: ${(props) => props.theme.colors.success};
+      }
+
+      & span.btn--erase {
+        background-image: url("/images/icons/Close-success.svg");
+      }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover, 
+      &:-webkit-autofill:focus {
+        border: none;
+        -webkit-text-fill-color: ${(props) => props.theme.colors.darkBlue};
+        -webkit-box-shadow: 0 0 0px 1000px ${(props) => props.theme.colors.successLight} inset;
+      } 
+    }
+
+    &__input--error {
+      border: 2px solid ${(props) => props.theme.colors.error};
+      background-color: ${(props) => props.theme.colors.errorLight};
+
+      & span {
+        color: ${(props) => props.theme.colors.error};
+      }
+
+      & span.btn--erase {
+        background-image: url("/images/icons/Close-error.svg");
+      }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover, 
+      &:-webkit-autofill:focus {
+        border: none;
+        -webkit-text-fill-color: ${(props) => props.theme.colors.darkBlue};
+        -webkit-box-shadow: 0 0 0px 1000px ${(props) => props.theme.colors.errorLight} inset;
+      } 
+    }
   }
 `;
 
