@@ -70,7 +70,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     const { user, refreshToken: rToken, accessToken: aToken } = response.data;
 
+    console.log("Refresh", rToken);
+
     if (rToken !== undefined) {
+      console.log("We're here");
       ctx.res.setHeader("Set-Cookie", [
         `refreshToken=deleted; Max-Age=0`,
         cookie.serialize("accessToken", aToken, {
