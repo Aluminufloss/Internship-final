@@ -24,6 +24,7 @@ const Avatar: React.FC<AvatarProps> = (props) => {
         height={154}
         alt="Your image"
         className="image"
+        unoptimized={true}
       />
       <ButtonIcon uploadPhoto={props.uploadPhoto} />
     </StyledAvatar>

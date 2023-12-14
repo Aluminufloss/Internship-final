@@ -27,7 +27,7 @@ const LoginForm: React.FC<FormProps> = (props) => {
           setSubmitting(true);
           await login(values.email, values.password);
           setSubmitting(false);
-          router.push('/');
+          router.push('/catalog');
         } catch (err) {
           setSubmitting(false);
           console.log("Error login");

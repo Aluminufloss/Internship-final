@@ -39,7 +39,7 @@ const RegistrationForm: React.FC<FormProps> = (props) => {
           setSubmitting(true);
           registration(values.email, values.password, values.username);
           setSubmitting(false);
-          router.push("/");
+          router.push("/catalog");
         } catch (err) {
           console.log("error registration");
         }

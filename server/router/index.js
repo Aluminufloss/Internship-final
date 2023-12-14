@@ -22,5 +22,7 @@ router.post("/refresh", userController.refresh);
 router.post("/change", userController.changeInfo);
 
 router.post("/book", bookController.createBook);
+router.get("/getBooks", bookController.getBooks);
+router.post("/getBook", bookController.getBookById);
 
 module.exports = router;

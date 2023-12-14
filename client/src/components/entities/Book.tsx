@@ -3,30 +3,69 @@ import styled from "styled-components";
 import Text from "../shared/Text";
 import Button from "../shared/Button";
 import StarRating from "../features/StarRating";
+import { IBook } from "@/models/response/Book/IBook";
+import Image from "next/image";
+import { DEFAULT_IMAGE } from "@/utils/constant/constant";
 
-const Book: React.FC = (props) => {
+type BookProps = {
+  book: IBook;
+  onClick: (book: IBook) => void; 
+};
+
+const Book: React.FC<BookProps> = (props) => {
+  const price = Number.isInteger(props.book.price)
+    ? `$ ${props.book.price}.00 USD`
+    : `$ ${props.book.price} USD`;
+
   return (
-    <StyledBook>
-      <div className="book__image">
+    <StyledBook book={props.book} onClick={ev => props.onClick(props.book)}>
+      <div className="book__image--container">
+        <Image
+          className="book__image"
+          width={1}
+          height={1}
+          src={props.book.imagePath}
+          onError={(e) => {
+            (e.target as HTMLImageElement).onerror = null;
+            (e.target as HTMLImageElement).src = DEFAULT_IMAGE.default;
+          }}
+          alt="Book cover"
+          unoptimized={true}
+        />
         <button className="book__like-btn"></button>
       </div>
-      <Text className="book__title" fontSize="smallBig" fontWeight="medium" color="darkBlue">The Chronicles of Narnia</Text>
-      <Text className="book__author" fontSize="small" fontWeight="semiBold" color="darkGrey">C. S. Lewis</Text>
-      <StarRating className="book__rating"/>
+      <Text
+        className="book__title"
+        fontSize="smallBig"
+        fontWeight="medium"
+        color="darkBlue"
+      >
+        {props.book.title}
+      </Text>
+      <Text
+        className="book__author"
+        fontSize="small"
+        fontWeight="semiBold"
+        color="darkGrey"
+      >
+        {props.book.author}
+      </Text>
+      <StarRating className="book__rating" rating={props.book.rating}/>
       <Button
         className="book__buy-btn"
         type="primary"
         width="100"
         height="34"
         fontSize="smallBig"
+        disabled={props.book.amount === 0 ? true : false}
       >
-        $ 50.00 USD
+        {props.book.amount !== 0 ? price : "Not available"}
       </Button>
     </StyledBook>
   );
 };
 
-const StyledBook = styled.li`
+const StyledBook = styled.li<BookProps>`
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -36,10 +75,12 @@ const StyledBook = styled.li`
     &__image {
       width: 100%;
       height: 58%;
-      background-image: url("images/books/6574ebeec35eb32f80655183.png");
-      background-repeat: no-repeat;
-      background-size: fill;
-      background-position: center center;
+      margin-bottom: 15px;
+    }
+
+    &__image {
+      width: 100%;
+      height: 100%;
       margin-bottom: 15px;
     }
 
@@ -48,7 +89,6 @@ const StyledBook = styled.li`
     }
 
     &__author {
-
       margin-bottom: 12px;
     }
 

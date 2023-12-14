@@ -1,22 +1,25 @@
 import React from "react";
 import styled from "styled-components";
+import { useRouter } from "next/router";
+
 import Book from "../entities/Book";
 
-const BookList: React.FC = () => {
+import { IBook } from "@/models/response/Book/IBook";
+
+type BookListProps = {
+  books: IBook[];
+}
+
+const BookList: React.FC<BookListProps> = (props) => {
+  const router = useRouter();
+
+  function handleClick(book: IBook) {
+    router.push(`/catalog/${book._id}`)
+  }
+
   return (
     <StyledBookList>
-      <Book/>
-      <Book/>
-      <Book/>
-      <Book/>
-      <Book/>
-      <Book/>
-      <Book/>
-      <Book/>
-      <Book/>
-      <Book/>
-      <Book/>
-      <Book/>
+      {props.books.map((book) => <Book book={book} onClick={handleClick}/>)}
     </StyledBookList>
   );
 };

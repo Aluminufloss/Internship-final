@@ -1,6 +1,6 @@
 const bookService = require("../service/book-service");
 
-class UserContoller {
+class BookContoller {
   async createBook(req, res, next) {
     try {
       const book = await bookService.create(req.body);
@@ -10,6 +10,24 @@ class UserContoller {
       next(err);
     }
   }
+
+  async getBooks(req, res, next) {
+    try {
+      const books = await bookService.getBooks();
+      return res.json(books);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getBookById(req, res, next) {
+    try {
+      const book = await bookService.getBookById(req.body._id);
+      return res.json(book[0]);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
-module.exports = new UserContoller();
+module.exports = new BookContoller();

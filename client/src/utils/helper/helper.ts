@@ -40,3 +40,7 @@ export function encodeImageToBase64String<T extends File>(image: T): Promise<str
     reader.readAsDataURL(image);
   });
 }
+
+export function convertRating(rating: number): number {
+  return 1;
+}

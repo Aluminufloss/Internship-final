@@ -21,10 +21,10 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="links__container">
-          <LinkTo href="/" className="link">
+          <LinkTo href="/catalog" className="link">
             Home Page
           </LinkTo>
-          <LinkTo href="/" className="link">
+          <LinkTo href="/catalog" className="link">
             Catalog
           </LinkTo>
           <LinkTo href="/user" className="link">

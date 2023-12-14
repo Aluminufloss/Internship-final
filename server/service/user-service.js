@@ -30,7 +30,12 @@ class UserService {
     const imagePath = `C:\\Users\\nilch\\Desktop\\Internship\\client\\public\\images\\user\\user-empthy.png`;
 
     const hashPassword = await bcrypt.hash(password, 3);
-    const user = await UserModel.create({ email, password: hashPassword, username, imagePath });
+    const user = await UserModel.create({
+      email,
+      password: hashPassword,
+      username,
+      imagePath,
+    });
 
     return this.generateTokens(user);
   }
@@ -78,7 +83,7 @@ class UserService {
   async getUser(user) {
     if (!user) {
       throw ApiError.UnauthorizedError("Cannot get the user");
-    } 
+    }
 
     const userDto = new UserDto(user);
     return { user: userDto };
@@ -87,28 +92,30 @@ class UserService {
   async upload(userID, base64String) {
     if (!userID) {
       throw ApiError.BadRequest("Don't have an user id");
-    } 
+    }
 
     const userFromDB = await UserModel.findOne({ _id: userID });
 
     if (!base64String) {
       throw ApiError.BadRequest("Don't have an base64 image string");
     }
-   
-    const base64Image = base64String.split(';base64,').pop();
+
+    const base64Image = base64String.split(";base64,").pop();
 
     const buffer = Buffer.from(base64Image, "base64");
 
-    fs.writeFileSync(`D:\\avatar_${userID}.png`, buffer);
+    fs.writeFileSync(
+      `/home/fusion/Desktop/Internship-final/client/public/images/user/avatar_${userID}.png`,
+      buffer
+    );
     const imagePath = `/images/user/avatar_${userID}.png`;
 
-    await UserModel.updateOne({ email: userFromDB.email }, { imagePath } );
+    await UserModel.updateOne({ email: userFromDB.email }, { imagePath });
 
     const userWithNewData = await UserModel.findOne({ _id: userID });
 
     return userWithNewData;
   }
-
 
   async change(user, email, password, username) {
     const userFromDB = await UserModel.findOne({ email: user.email });
@@ -121,19 +128,29 @@ class UserService {
     const newPassword = password ?? "";
 
     if (newPassword) {
-      const isPassEqual = await bcrypt.compare(newPassword, userFromDB.password);
+      const isPassEqual = await bcrypt.compare(
+        newPassword,
+        userFromDB.password
+      );
 
       if (isPassEqual) {
         throw ApiError.BadRequest("Новый пароль совпадает с старым");
       }
-        
+
       const hashPassword = await bcrypt.hash(newPassword, 3);
 
-      await UserModel.updateOne({ email: userFromDB.email }, { password: hashPassword } );
+      await UserModel.updateOne(
+        { email: userFromDB.email },
+        { password: hashPassword }
+      );
     }
 
-    const userWithNewData = await UserModel.updateOne({ email: user.email }, { email: newEmail, username: newUserName }, { new: true });
-    
+    const userWithNewData = await UserModel.updateOne(
+      { email: user.email },
+      { email: newEmail, username: newUserName },
+      { new: true }
+    );
+
     return userWithNewData;
   }
 }

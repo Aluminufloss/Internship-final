@@ -12,7 +12,7 @@ type HeaderProps = {
 };
 
 const Header: React.FC<HeaderProps> = (props) => {
-  const [formType, setFormType] = useState("login");
+  const [formType, setFormType] = useState("registration");
   const router = useRouter();
 
   function handleClick(ev: React.MouseEvent<HTMLButtonElement>) {
