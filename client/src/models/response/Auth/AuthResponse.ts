@@ -5,3 +5,7 @@ export interface AuthRespone {
   refreshToken: string;
   user: IUser;
 }
+
+export interface UploadImageRespone {
+  imagePath: string;
+}

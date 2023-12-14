@@ -27,10 +27,10 @@ const Footer: React.FC = () => {
           <LinkTo href="/" className="link">
             Catalog
           </LinkTo>
-          <LinkTo href="/" className="link">
+          <LinkTo href="/user" className="link">
             My Account
           </LinkTo>
-          <LinkTo href="/" className="link">
+          <LinkTo href="/cart" className="link">
             Cart
           </LinkTo>
         </div>

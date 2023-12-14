@@ -105,9 +105,10 @@ class UserContoller {
       const userID = req.body.id;
       const base64String = req.body.image;
 
-      await userSevice.upload(userID, base64String);
+      const user = await userSevice.upload(userID, base64String);
 
-      return res.json("Success");
+      console.log("User", user.imagePath);
+      return res.json({ imagePath: user.imagePath });
     } catch (err) {
       next(err);
     }

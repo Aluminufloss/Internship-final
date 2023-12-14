@@ -19,6 +19,7 @@ enum ActionKind {
   Loading = "loading",
   Registration = "user/registration",
   ChangeInformation = "user/change",
+  UploadImage = "user/upload",
 }
 
 type LoginAction = {
@@ -56,13 +57,21 @@ type ChangeInformation = {
   };
 };
 
+type UploadImage = {
+  type: ActionKind.UploadImage;
+  payload: {
+    imagePath: string;
+  };
+};
+
 type Action =
   | LoginAction
   | RegistrationAction
   | LoginRejected
   | SetUser
   | Loading
-  | ChangeInformation;
+  | ChangeInformation
+  | UploadImage;
 
 export type UserContextType = {
   state: AuthentificationState;
@@ -75,6 +84,7 @@ export type UserContextType = {
     newEmail: string,
     newPassword: string
   ) => void;
+  uploadImage: (image: string, id: string) => void;
 };
 
 const initialState: UserContextType = {
@@ -93,6 +103,7 @@ const initialState: UserContextType = {
   registration: () => null,
   setUser: () => null,
   changeInformation: () => null,
+  uploadImage: () => null,
 };
 
 const UserContext = createContext<UserContextType>(initialState);
@@ -210,6 +221,16 @@ function UserProvider(
     }
   }
 
+  async function uploadImage(id: string, image: string) {
+    dispatch({ type: ActionKind.Loading });
+    try {
+      const response = await AuthService.uploadImage(id, image);
+      dispatch({ type: ActionKind.UploadImage, payload: { imagePath: response.data.imagePath! } });
+    } catch (err) {
+      console.log("Something wrong");
+    }
+  }
+
   async function changeInformation(
     user: IUser,
     newUsername: string,
@@ -240,6 +261,7 @@ function UserProvider(
         registration,
         setUser,
         changeInformation,
+        uploadImage,
       }}
     >
       {children}

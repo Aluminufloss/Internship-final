@@ -8,9 +8,8 @@ import Label from "../shared/label";
 import Button from "../shared/Button";
 
 import { IUser } from "@/models/response/Auth/IUser";
-import { encodeImageFileAsURL } from "@/utils/helper/helper";
 
-import { RegistrationValidationSchema } from "@/schema/validation";
+import { UserValidationSchema } from "@/schema/validation";
 
 import { useAuth } from "@/Contexts/UserContext";
 
@@ -25,9 +24,6 @@ const UserForm: React.FC<FormProps> = (props) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [disabledButton, setDisabledButton] = useState(true);
-
-  const [initialUsername, setInitialUsername] = useState(props.user.username);
-  const [initialEmail, setInitialEmail] = useState(props.user.email);
 
   const [isValidated, setIsValidated] = useState(false);
 
@@ -51,15 +47,16 @@ const UserForm: React.FC<FormProps> = (props) => {
         username: "",
         email: "",
         password: "",
+        passwordConfirm: "",
       }}
-      // validationSchema={RegistrationValidationSchema}
+      validationSchema={UserValidationSchema}
       onSubmit={async (values, { setSubmitting }) => {
         try {
           setSubmitting(true);
 
           if (
-            values.username === initialUsername &&
-            values.email === initialEmail &&
+            values.username === state.user.username &&
+            values.email === state.user.email &&
             values.password === ""
           ) {
             console.log("sukaddd")
@@ -81,7 +78,11 @@ const UserForm: React.FC<FormProps> = (props) => {
     >
       {(formik) => (
         <StyledUserForm>
-          <Text fontSize="medium" fontWeight="medium" className="text">
+          <Text 
+            fontSize="medium" 
+            fontWeight="medium" 
+            className="text"
+          >
             Personal Information
           </Text>
           <button className="btn__change-info" onClick={handleChangeInfoClick}>
@@ -98,7 +99,7 @@ const UserForm: React.FC<FormProps> = (props) => {
             id="username"
             className="input__username"
             disabled={disabled}
-            placeholder={initialUsername}
+            placeholder={state.user.username}
             color="dark"
             value={formik.values.username}
             onChange={formik.handleChange}
@@ -110,7 +111,7 @@ const UserForm: React.FC<FormProps> = (props) => {
           <Input
             size="small"
             inputType="email"
-            placeholder={initialEmail}
+            placeholder={state.user.email}
             id="email"
             className="input__email"
             iconName="Mail"
@@ -119,6 +120,8 @@ const UserForm: React.FC<FormProps> = (props) => {
             onChange={formik.handleChange}
             disabled={disabled}
           />
+
+          
 
           <div className="container">
             <Text
@@ -146,6 +149,7 @@ const UserForm: React.FC<FormProps> = (props) => {
                 inputType="password"
                 placeholder="New password"
                 id="new-password"
+                name="password"
                 color="dark"
                 className="input__password"
                 onChange={formik.handleChange}
@@ -160,7 +164,8 @@ const UserForm: React.FC<FormProps> = (props) => {
                 inputType="password"
                 placeholder="Password replay"
                 color="dark"
-                id="new-password-reply"
+                name="passwordConfirm"
+                id="passwordConfirm"
                 className="input__password"
                 onChange={formik.handleChange}
                 iconName="Hide"
@@ -168,8 +173,7 @@ const UserForm: React.FC<FormProps> = (props) => {
               <Text
                 fontSize="medium"
                 fontWeight="medium"
-                className="text"
-                style={{ marginBottom: "40px" }}
+                className="text text__repeat-pas"
               >
                 Repeat your password without errors
               </Text>
@@ -223,6 +227,10 @@ const StyledUserForm = styled.form`
 
   .text {
     margin-top: 10px;
+
+    &__repeat-pas {
+      margin-bottom: 40px;
+    }
   }
 
   input::placeholder {

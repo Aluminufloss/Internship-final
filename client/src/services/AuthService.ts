@@ -1,6 +1,6 @@
 import $api from "../axios/index";
 import { AxiosResponse } from "axios";
-import { AuthRespone } from "../models/response/Auth/AuthResponse";
+import { AuthRespone, UploadImageRespone } from "../models/response/Auth/AuthResponse";
 import { IUser } from "@/models/response/Auth/IUser";
 
 export default class AuthService {
@@ -45,5 +45,9 @@ export default class AuthService {
     newPassword: string
   ): Promise<AxiosResponse<AuthRespone>> {
     return $api.post("/change", { user, newUsername, newEmail, newPassword });
+  }
+
+  static async uploadImage(id: string, image: string): Promise<AxiosResponse<UploadImageRespone>> {
+    return $api.post("/upload", { id, image });
   }
 }

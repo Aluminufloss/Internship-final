@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
 
-import { cookies } from "next/headers";
-
 import Layout from "@/components/layout/Layout";
 
 import Footer from "@/components/widgets/Footer";
@@ -27,9 +25,7 @@ type Props = {
 };
 
 const User: React.FC<Props> = (props) => {
-  const { state, setUser } = useAuth();
-  const [avatar, setAvatar] = useState<File>();
-  const [decodedImage, setDecodedImage] = useState<string>();
+  const { state, setUser, uploadImage } = useAuth();
 
   useEffect(() => {
     (async () => {
@@ -40,9 +36,8 @@ const User: React.FC<Props> = (props) => {
   async function handleUploadPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
     const image = e.target.files![0];
-    const imageBase64 = await encodeImageToBase64String(image);
-    setAvatar(image);
-    setDecodedImage(imageBase64);
+    const base64Image = await encodeImageToBase64String(image);
+    uploadImage(state.user.id!, base64Image);
   }
 
   return (
@@ -54,7 +49,7 @@ const User: React.FC<Props> = (props) => {
             uploadPhoto={handleUploadPhoto}
             avatar={props.user.imagePath!}
           />
-          <UserForm user={state.user} avatar={avatar!} />
+          <UserForm user={state.user} />
         </>
       ) : (
         "Loading..."

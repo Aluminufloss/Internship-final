@@ -81,7 +81,6 @@ class UserService {
     } 
 
     const userDto = new UserDto(user);
-    console.log("User", userDto);
     return { user: userDto };
   }
 
@@ -89,6 +88,8 @@ class UserService {
     if (!userID) {
       throw ApiError.BadRequest("Don't have an user id");
     } 
+
+    const userFromDB = await UserModel.findOne({ _id: userID });
 
     if (!base64String) {
       throw ApiError.BadRequest("Don't have an base64 image string");
@@ -99,6 +100,13 @@ class UserService {
     const buffer = Buffer.from(base64Image, "base64");
 
     fs.writeFileSync(`D:\\avatar_${userID}.png`, buffer);
+    const imagePath = `/images/user/avatar_${userID}.png`;
+
+    await UserModel.updateOne({ email: userFromDB.email }, { imagePath } );
+
+    const userWithNewData = await UserModel.findOne({ _id: userID });
+
+    return userWithNewData;
   }
 
 
