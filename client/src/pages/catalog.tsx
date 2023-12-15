@@ -34,7 +34,6 @@ const Home: React.FC<Props> = (props) => {
 
   useEffect(() => {
     (async () => {
-      console.log("Yep books", props.books)
       setUser(props.user, props.isAuth);
       setBooks(props.books);
     })();
@@ -42,58 +41,45 @@ const Home: React.FC<Props> = (props) => {
 
   return (
     <>
-    <Layout>
-      <Header isAuth={props.isAuth}/>
-      <BannerTop
-        bannerTitle="Build your library with us"
-        bannerSubtitle="Buy two books and get one for free"
-        buttonText="Choose a book"
-      />
+      <Layout>
+        <Header isAuth={props.isAuth} />
+        <BannerTop
+          bannerTitle="Build your library with us"
+          bannerSubtitle="Buy two books and get one for free"
+          buttonText="Choose a book"
+        />
 
-      <Filtres />
+        <Filtres />
 
-      <BookList books={props.books}/>
+        <BookList books={props.books} />
 
-      <BannerBottom
-        bannerTitle="Authorize now"
-        bannerSubtitle="Authorize now and discover the fabulous world of books"
-        buttonText="Log In/ Sing Up"
-      />
-    </Layout>
-    <Footer />
+        <BannerBottom
+          bannerTitle="Authorize now"
+          bannerSubtitle="Authorize now and discover the fabulous world of books"
+          buttonText="Log In/ Sing Up"
+        />
+      </Layout>
+      <Footer />
     </>
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
-  try {
-    const responseBooks = await BookService.getBooks();
-    const books = responseBooks.data;
-    console.log("Yep")
-
-    return {
-      props: { books },
-    };
-  } catch (err) {
-    console.log("Something wrong with getting books");
-    return {
-      props: { },
-    };
-  }
-}
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
+    // console.log("Cookie", ctx.req.cookies)
     const { refreshToken, accessToken } = ctx.req.cookies;
+    // console.log("Suka access", accessToken);
 
     const response = await AuthService.getMe(
       refreshToken as string,
       accessToken as string
     );
-    console.log("Resp", response.data);
+
+    // console.log("Resp", response.data);
     const { user, refreshToken: rToken, accessToken: aToken } = response.data;
 
-    if (rToken !== undefined) {
+    if (typeof rToken !== 'undefined') {
+      console.log("We're here");
       ctx.res.setHeader("Set-Cookie", [
         `refreshToken=deleted; Max-Age=0`,
         cookie.serialize("accessToken", aToken, {
@@ -107,17 +93,53 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       ]);
     }
 
-    return {
-      props: { user, isAuth: true },
-    };
+    /**
+     * If we have user, we will try to get books
+     */
+    try {
+      const responseBooks = await BookService.getBooks();
+      const books = responseBooks.data;
+
+      /**
+     * If we have user and books
+     */
+      return {
+        props: { user, isAuth: true, books },
+      };
+    } catch (err) {
+      /**
+     * If we have user but not books
+     */
+      return {
+        props: { user, isAuth: true, books: {} },
+      };
+    }
   } catch (err) {
-    console.log(err);
-    return {
-      props: {
-        user: {},
-        isAuth: false,
-      },
-    };
+      /**
+     * If we don't have user but we will try to get books
+     */
+    try {
+      const responseBooks = await BookService.getBooks();
+      const books = responseBooks.data;
+      return {
+        props: {
+          user: {},
+          isAuth: false,
+          books,
+        },
+      };
+    } catch (err) {
+      /**
+     * If we don't have user and books 
+     */
+      return {
+        props: {
+          user: {},
+          isAuth: false,
+          books: {},
+        },
+      };
+    }
   }
 };
 

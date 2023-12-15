@@ -52,10 +52,7 @@ class TokenService {
   }
 
   async findToken(refreshToken) {
-    const sus = refreshToken;
-    // console.log("Refresh", sus)
-    const tokenData = await tokenModel.findOne( { refreshToken: sus } );
-    // console.log("token data ", tokenData);
+    const tokenData = await tokenModel.findOne( { refreshToken: refreshToken } );
     return tokenData;
   }
 }

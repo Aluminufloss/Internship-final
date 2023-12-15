@@ -54,6 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const book = bookResponse.data;
 
     try {
+      console.log("Sussy request", ctx.req.cookies)
       const { refreshToken, accessToken } = ctx.req.cookies;
 
       const response = await AuthService.getMe(
@@ -63,7 +64,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
       const { user, refreshToken: rToken, accessToken: aToken } = response.data;
 
-      if (rToken !== undefined) {
+      if (typeof rToken !== 'undefined') {
+        console.log("We're here");
         ctx.res.setHeader("Set-Cookie", [
           `refreshToken=deleted; Max-Age=0`,
           cookie.serialize("accessToken", aToken, {

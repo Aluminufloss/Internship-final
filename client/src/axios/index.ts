@@ -7,7 +7,7 @@ const $api = axios.create({
   baseURL: API_URL,
 });
 
-$api.interceptors.request.use(async (config) => {
+$api.interceptors.request.use((config) => {
   try {
     const token = config.data.accessToken;
 
@@ -17,7 +17,7 @@ $api.interceptors.request.use(async (config) => {
 
     return config;
   } catch (err) {
-    console.log("Ошибка при формировании заголовка запроса");
+    console.log(err, "Ошибка при формировании заголовка запроса");
   }
 
   return config;

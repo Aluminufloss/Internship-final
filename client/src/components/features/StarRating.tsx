@@ -1,27 +1,26 @@
 import React from "react";
 import styled from "styled-components";
 import Star from "../shared/Star";
+import { countRating } from "@/utils/helper/helper";
 
 type StarRatingProps = {
   className?: string;
-  rating: number;
+  rating: string;
 }
 
 const StarRating: React.FC<StarRatingProps> = (props) => {
-  const rating = Number.isInteger(props.rating)
-    ? `${props.rating}.00`
-    : `${props.rating}`;
+  const starFlag = countRating(props.rating);
 
   return (
     <StyledStarRating className={props.className} rating={props.rating}>
       <div className="stars__container">
-        <Star />
-        <Star />
-        <Star />
-        <Star />
-        <Star />
+        <Star flag={starFlag[0]}/>
+        <Star flag={starFlag[1]}/>
+        <Star flag={starFlag[2]}/>
+        <Star flag={starFlag[3]}/>
+        <Star flag={starFlag[4]}/>
       </div>
-      <span className="rating">{rating}</span>
+      <span className="rating">{props.rating}</span>
     </StyledStarRating>
   )
 };
@@ -29,7 +28,7 @@ const StarRating: React.FC<StarRatingProps> = (props) => {
 const StyledStarRating = styled.div<StarRatingProps>`
   width: 100%;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 
   .rating {

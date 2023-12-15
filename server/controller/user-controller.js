@@ -69,18 +69,17 @@ class UserContoller {
   async refresh(req, res, next) {
     try {
       const { refreshToken } = req.body;
-      console.log("suka", refreshToken);
       const userData = await userSevice.refresh(refreshToken);
 
-      res.cookie("refreshToken", userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
+      // res.cookie("refreshToken", userData.refreshToken, {
+      //   maxAge: 30 * 24 * 60 * 60 * 1000,
+      //   httpOnly: true,
+      // });
 
-      res.cookie("accessToken", userData.accessToken, {
-        maxAge: 1 * 1 * 15 * 60 * 1000,
-        httpOnly: true,
-      });
+      // res.cookie("accessToken", userData.accessToken, {
+      //   maxAge: 1 * 1 * 15 * 60 * 1000,
+      //   httpOnly: true,
+      // });
 
       return res.json(userData);
     } catch (err) {

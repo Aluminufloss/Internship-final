@@ -6,6 +6,7 @@ import StarRating from "../features/StarRating";
 import { IBook } from "@/models/response/Book/IBook";
 import Image from "next/image";
 import { DEFAULT_IMAGE } from "@/utils/constant/constant";
+import { convertRating } from "@/utils/helper/helper";
 
 type BookProps = {
   book: IBook;
@@ -16,6 +17,8 @@ const Book: React.FC<BookProps> = (props) => {
   const price = Number.isInteger(props.book.price)
     ? `$ ${props.book.price}.00 USD`
     : `$ ${props.book.price} USD`;
+
+  const rating = convertRating(props.book.rating);
 
   return (
     <StyledBook book={props.book} onClick={ev => props.onClick(props.book)}>
@@ -50,7 +53,7 @@ const Book: React.FC<BookProps> = (props) => {
       >
         {props.book.author}
       </Text>
-      <StarRating className="book__rating" rating={props.book.rating}/>
+      <StarRating className="book__rating" rating={rating}/>
       <Button
         className="book__buy-btn"
         type="primary"
