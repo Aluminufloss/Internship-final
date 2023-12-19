@@ -200,6 +200,10 @@ class UserService {
   async deleteFavorite(id, bookID) {
     await UserModel.updateOne({ _id: id}, { $pull: { favoriteBooks: bookID } });
   }
+
+  async deleteFromCart(id, bookID) {
+    await UserModel.updateOne({ _id: id}, { $pull: { cart: bookID } });
+  }
 }
 
 module.exports = new UserService();

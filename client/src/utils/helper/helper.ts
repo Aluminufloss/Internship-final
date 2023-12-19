@@ -1,4 +1,16 @@
+import { AuthRespone } from "@/models/response/Auth/AuthResponse";
 import AuthService from "@/services/AuthService";
+import { AxiosResponse } from "axios";
+import { GetServerSidePropsContext, PreviewData } from "next";
+import { ParsedUrlQuery } from "querystring";
+import cookie from "cookie";
+
+type CheckTokensResult = {
+  context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>;
+  aToken: string;
+  rToken: string;
+};
+
 
 export function getMediaQuery(minWidth: number): string {
   return `@media (min-width: ${minWidth}px)`;
@@ -50,8 +62,8 @@ export function convertRating(rating: number): string {
     String(ratingRound).length === 3
       ? String(ratingRound + "0")
       : String(ratingRound).length === 1
-        ? String(ratingRound + ".00")
-        : String(ratingRound);
+      ? String(ratingRound + ".00")
+      : String(ratingRound);
   return resultRating;
 }
 
@@ -60,15 +72,55 @@ export function countRating(rating: string): string[] {
 
   for (let i = 1; i <= 5; i++) {
     if (i <= Number(rating)) {
-      ratingFlags[i - 1] = 'full';
+      ratingFlags[i - 1] = "full";
     } else {
       if (i - 0.5 <= Number(rating)) {
-        ratingFlags[i - 1] = 'half';
+        ratingFlags[i - 1] = "half";
       } else {
-        ratingFlags[i - 1] = 'empty';
+        ratingFlags[i - 1] = "empty";
       }
     }
   }
 
   return ratingFlags;
+}
+
+export function correctPrice(price: number): string {
+  const priceCorrect = Number.isInteger(price)
+  ? `$ ${price}.00 USD`
+  : price.toString().length === 3 ? `$ ${price}0 USD` : `$ ${price} USD`;
+
+  return priceCorrect;
+}
+
+export function checkTokens(
+  response: AxiosResponse<AuthRespone, any>,
+  context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
+): CheckTokensResult {
+  if (response.config && response.config.headers) {
+    const rToken = response.config.headers.token as string;
+    const authorizationHeader = response.config.headers.Authorization as string;
+    const aToken = authorizationHeader.split(" ")[1];
+
+    if (typeof rToken !== "undefined") {
+      context.res.setHeader("Set-Cookie", [
+        `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
+        cookie.serialize("accessToken", aToken, {
+          httpOnly: true,
+          maxAge: 1 * 1 * 15 * 60 * 1000,
+        }),
+        cookie.serialize("refreshToken", rToken, {
+          httpOnly: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+        }),
+      ]);
+    } else {
+      return { context, aToken, rToken: "" };
+    }
+
+    return { context, aToken, rToken };
+  } else {
+    console.log("You don't have headers in your response");
+    return { context, aToken: "", rToken: "" };
+  }
 }

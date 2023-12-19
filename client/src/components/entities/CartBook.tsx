@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Text from "../shared/Text";
-import Button from "../shared/Button";
 import { IBook } from "@/models/response/Book/IBook";
 import { DEFAULT_IMAGE } from "@/utils/constant/constant";
-import { convertRating } from "@/utils/helper/helper";
+import { correctPrice } from "@/utils/helper/helper";
 import { useAuth } from "@/Contexts/UserContext";
 
 type BookProps = {
@@ -14,8 +13,14 @@ type BookProps = {
 };
 
 const CartBook: React.FC<BookProps> = (props) => {
-  const { state } = useAuth();
+  const { state,deleteFromCart } = useAuth();
   const [orderAmount, setOrderAmount] = useState(1);
+
+  const price = correctPrice(props.book.price);
+
+  async function handleDelete() {
+    //deleteFromCart(props.book._id!, props.accessToken!);
+  }
 
   return (
     <StyledCartBook book={props.book} className={props.className}>
@@ -50,9 +55,15 @@ const CartBook: React.FC<BookProps> = (props) => {
             {props.book.author}
           </Text>
           <div className="book__buttons">
-            <span className="book__order-amount">{orderAmount}</span>
-            <button className="book__delete-amount"></button>
+            <div className="book__order-amount">
+              <button className="book__order-amount--minus">-</button>
+              {orderAmount}
+              <button className="book__order-amount--plus">+</button>
+            </div>
+            <button className="book__delete-amount" onClick={handleDelete}></button>
           </div>
+
+          <Text className="book__price" color="dark" fontSize="smallBig" fontWeight="medium">{price}</Text>
         </div>
       </div>
     </StyledCartBook>
@@ -74,7 +85,7 @@ const StyledCartBook = styled.li<BookProps>`
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
-      margin-bottom: 70px;
+      margin-bottom: 30px;
     }
 
     &__info {
@@ -95,6 +106,7 @@ const StyledCartBook = styled.li<BookProps>`
       display: flex;
       justify-content: flex-start;
       align-items: center;
+      margin-bottom: 32px;
     }
 
     &__order-amount {
@@ -106,8 +118,7 @@ const StyledCartBook = styled.li<BookProps>`
       justify-content: center;
       align-items: center;
 
-      &::before {
-        content: "-";
+      &--minus {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -118,8 +129,7 @@ const StyledCartBook = styled.li<BookProps>`
         margin-right: 10px;
       }
 
-      &::after {
-        content: "+";
+      &--plus {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -128,6 +138,11 @@ const StyledCartBook = styled.li<BookProps>`
         border-radius: 22px;
         background-color: ${(props) => props.theme.colors.light};
         margin-left: 10px;
+      }
+
+      & button:hover {
+        transform: scale(1.05);
+        background-color: ${(props) => props.theme.colors.darkGrey};
       }
     }
 
@@ -138,35 +153,6 @@ const StyledCartBook = styled.li<BookProps>`
       background-image: url("/images/icons/Delete.svg");
       background-repeat: no-repeat;
       background-size: cover;
-    }
-  }
-
-  .price {
-    margin-bottom: 30px;
-    display: flex;
-    font-size: 24px;
-
-    &__text {
-      margin-right: 4px;
-      font-weight: 500;
-    }
-
-    &__amount {
-      font-weight: 700;
-    }
-  }
-
-  .buttons__group {
-    display: flex;
-    flex-direction: column;
-
-    &--catalog {
-      width: 100%;
-      margin-bottom: 18px;
-    }
-
-    &--checkout {
-      width: 100%;
     }
   }
 `;

@@ -18,6 +18,7 @@ enum ActionKind {
   GetMe = "user/getMe",
   SetUser = "user/setUser",
   SetCart = "user/setCart",
+  DeleteFromCart = "user/deleteFromCart",
   Loading = "loading",
   Registration = "user/registration",
   ChangeInformation = "user/change",
@@ -53,6 +54,13 @@ type SetCart = {
   type: ActionKind.SetCart;
   payload: {
     cart: IBook[];
+  };
+};
+
+type DeleteFromCart = {
+  type: ActionKind.DeleteFromCart;
+  payload: {
+    bookID: string;
   };
 };
 
@@ -99,7 +107,8 @@ type Action =
   | ChangeInformation
   | UploadImage
   | AddFavorite
-  | DeleteFavorite;
+  | DeleteFavorite
+  | DeleteFromCart;
 
 export type UserContextType = {
   state: AuthentificationState;
@@ -116,6 +125,7 @@ export type UserContextType = {
   uploadImage: (image: string, id: string) => void;
   addFavorite: (bookID: string, accessToken: string) => void;
   deleteFavorite: (bookID: string, accessToken: string) => void;
+  deleteFromCart: (bookID: string, accessToken: string, refreshToken: string) => void;
 };
 
 const initialState: UserContextType = {
@@ -139,6 +149,7 @@ const initialState: UserContextType = {
   changeInformation: () => null,
   uploadImage: () => null,
   addFavorite: () => null,
+  deleteFromCart: () => null,
   deleteFavorite: () => null,
 };
 
@@ -245,6 +256,19 @@ function userReducer(
             (el) => el !== action.payload.bookID
           ),
           cart: state.user.cart,
+        },
+      };
+    }
+
+    case ActionKind.DeleteFromCart: {
+      return {
+        ...state,
+        user: {
+          email: state.user.email,
+          cart: [...state.user.cart].filter(
+            (el) => el._id !== action.payload.bookID
+          ),
+          favoriteBooks: state.user.favoriteBooks,
         },
       };
     }
@@ -376,6 +400,18 @@ function UserProvider(
     }
   }
 
+  async function deleteFromCart(bookID: string, accessToken: string, refreshToken: string) {
+    dispatch({ type: ActionKind.Loading });
+    try {
+      await AuthService.deleteFromCart(bookID, accessToken, refreshToken);
+
+      dispatch({ type: ActionKind.DeleteFromCart, payload: { bookID } });
+    } catch (err) {
+      console.log("Something wrong with changing your personal information");
+      throw err;
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -384,6 +420,7 @@ function UserProvider(
         registration,
         setUser,
         setCart,
+        deleteFromCart,
         changeInformation,
         uploadImage,
         addFavorite,
