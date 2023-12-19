@@ -71,4 +71,9 @@ export default class AuthService {
   static async getCart(accessToken: string, refreshToken: string): Promise<AxiosResponse<BookResponse>> {
     return $api.post("/cart", { accessToken, refreshToken });
   }
+
+  static async deleteFromCart(bookID: string, accessToken: string, refreshToken: string): Promise<AxiosResponse<BookResponse>> {
+    return $api.post("/cartDelete", { bookID, accessToken, refreshToken });
+  }
+
 }

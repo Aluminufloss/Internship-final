@@ -152,6 +152,15 @@ class UserContoller {
       next(err);
     }
   }
+
+  async deleteFromCart(req, res, next) {
+    try {
+      await userService.deleteFromCart(req.user.id, req.body.bookID);
+      return res.json("Success");
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new UserContoller();
