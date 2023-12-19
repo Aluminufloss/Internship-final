@@ -23,29 +23,6 @@ const UserCart: React.FC<CartProps> = (props) => {
           key={book._id}
         />
       ))}
-      <div className="price">
-        <Text className="price__text" color="dark">Total:</Text>
-        <Text className="price__amount" color="dark">38</Text>
-      </div>
-
-      <div className="buttons__group">
-        <Button
-          className="buttons__group--catalog"
-          type="secondary"
-          width="268"
-          height="35"
-        >
-          Continue shopping
-        </Button>
-        <Button
-          className="buttons__group--checkout"
-          type="primary"
-          width="174"
-          height="35"
-        >
-          Checkout
-        </Button>
-      </div>
     </StyledUserCart>
   );
 };

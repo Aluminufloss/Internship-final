@@ -14,6 +14,8 @@ import EmptyCart from "@/components/entities/EmptyCart";
 import { IUser } from "@/models/response/Auth/IUser";
 import { IBook } from "@/models/response/Book/IBook";
 import UserCart from "@/components/widgets/UserCart";
+import Button from "@/components/shared/Button";
+import Text from "@/components/shared/Text";
 
 type Props = {
   user: IUser;
@@ -40,7 +42,36 @@ const Cart: React.FC<Props> = (props) => {
           text="Add items to cart to make a purchase.Go to the catalogue no."
         />
       ) : (
-        <UserCart cart={state.user.cart}/>
+        <>
+          <UserCart cart={props.cart} />
+          <div className="price">
+            <Text className="price__text" color="dark">
+              Total:
+            </Text>
+            <Text className="price__amount" color="dark">
+              38
+            </Text>
+          </div>
+
+          <div className="buttons__group">
+            <Button
+              className="buttons__group--catalog"
+              type="secondary"
+              width="268"
+              height="35"
+            >
+              Continue shopping
+            </Button>
+            <Button
+              className="buttons__group--checkout"
+              type="primary"
+              width="174"
+              height="35"
+            >
+              Checkout
+            </Button>
+          </div>
+        </>
       )}
       <Footer />
     </Layout>
@@ -87,7 +118,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       const cart = cartResponse.data;
 
       const refreshToken = cartResponse.config.headers.token;
-      const accessToken = cartResponse.config.headers.Authorization.split(" ")[1];
+      const accessToken =
+        cartResponse.config.headers.Authorization.split(" ")[1];
 
       if (typeof refreshToken !== "undefined") {
         console.log("We're here");
