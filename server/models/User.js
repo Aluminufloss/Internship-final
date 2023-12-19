@@ -5,6 +5,9 @@ const UserSchema = new Schema({
     password: {type: String, required: true},
     username: {type: String, required: true},
     imagePath: {type: String, required: true},
+    favoriteBooks: [{type: Schema.Types.ObjectId, ref: "Book"}],
+    cart: [{type: Schema.Types.ObjectId, ref: "Book"}],
+    ratedBooks: [{type: Schema.Types.ObjectId, ref: "Book"}, {type: Number}],
     roles: [{type: String, ref: 'Role'}],
 })
 

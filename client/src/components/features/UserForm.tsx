@@ -55,20 +55,16 @@ const UserForm: React.FC<FormProps> = (props) => {
           setSubmitting(true);
 
           if (
-            values.username === state.user.username &&
-            values.email === state.user.email &&
+            values.username === "" &&
+            values.email === "" &&
             values.password === ""
           ) {
-            console.log("sukaddd")
             return;
           }
 
           await changeInformation(state.user, values.username, values.email, values.password);
 
           console.log("Yes");
-
-          // const im = encodeImageFileAsURL(props.avatar!);
-          // console.log("Yep", im)
 
           setSubmitting(false);
         } catch (err) {
@@ -77,7 +73,7 @@ const UserForm: React.FC<FormProps> = (props) => {
       }}
     >
       {(formik) => (
-        <StyledUserForm>
+        <StyledUserForm onSubmit={formik.handleSubmit}>
           <Text 
             fontSize="medium" 
             fontWeight="medium" 

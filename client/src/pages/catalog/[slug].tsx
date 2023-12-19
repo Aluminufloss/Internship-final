@@ -15,13 +15,18 @@ import Header from "@/components/widgets/Header";
 import Footer from "@/components/widgets/Footer";
 
 import { useAuth } from "@/Contexts/UserContext";
-import styled from "styled-components";
+import BookInformation from "@/components/widgets/BookInformation";
+import BannerBottom from "@/components/entities/BannerBottom";
+import CreateComment from "@/components/features/CreateComment";
+import { IComment } from "@/models/response/Comment/IComment";
+import Comments from "@/components/widgets/Comments";
 
 type BookDetailsProps = {
   book: IBook;
   user: IUser;
   isAuth: boolean;
-
+  accessToken: string;
+  comments: IComment[];
 };
 
 interface IParams extends ParsedUrlQuery {
@@ -40,7 +45,23 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
   return (
     <>
       <Layout>
-        <Header isAuth={props.isAuth}/>
+        <Header isAuth={props.isAuth} />
+        <BookInformation book={props.book} />
+        {!props.isAuth ? (
+          <BannerBottom
+            bannerTitle="Authorize now"
+            bannerSubtitle="Authorize now and discover the fabulous world of books"
+            buttonText="Log In/ Sing Up"
+          />
+        ) : (
+          <>
+            <Comments comments={props.comments}/>
+            <CreateComment
+              bookID={props.book._id as string}
+              accessToken={props.accessToken}
+            />
+          </>
+        )}
       </Layout>
       <Footer />
     </>
@@ -49,54 +70,118 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
-    const { slug } = ctx.params as IParams;
-    const bookResponse = await BookService.getBook(slug);
-    const book = bookResponse.data;
+    const { refreshToken, accessToken } = ctx.req.cookies;
 
+    const response = await AuthService.getMe(
+      refreshToken as string,
+      accessToken as string
+    );
+
+    const { user, refreshToken: rToken, accessToken: aToken } = response.data;
+
+    if (typeof rToken !== "undefined") {
+      console.log("We're here");
+      ctx.res.setHeader("Set-Cookie", [
+        `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
+        cookie.serialize("accessToken", aToken, {
+          httpOnly: true,
+          maxAge: 1 * 1 * 15 * 60 * 1000,
+          path: "/",
+        }),
+        cookie.serialize("refreshToken", rToken, {
+          httpOnly: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+          path: "/",
+        }),
+      ]);
+    }
+
+    /**
+     * If we have user, we will try to get books
+     */
     try {
-      console.log("Sussy request", ctx.req.cookies)
-      const { refreshToken, accessToken } = ctx.req.cookies;
+      const { slug } = ctx.params as IParams;
+      const bookResponse = await BookService.getBook(slug);
+      const book = bookResponse.data;
 
-      const response = await AuthService.getMe(
-        refreshToken as string,
-        accessToken as string
-      );
+      const commentsResponse = await BookService.getComments(book._id as string, aToken);
+      const comments = commentsResponse.data;
 
-      const { user, refreshToken: rToken, accessToken: aToken } = response.data;
+      const refreshToken = commentsResponse.config.headers.token;
+      const accessToken = commentsResponse.config.headers.Authorization.split(" ")[1];
 
-      if (typeof rToken !== 'undefined') {
-        console.log("We're here");
+      if (typeof refreshToken !== 'undefined') {
+        console.log("We're here 2");
         ctx.res.setHeader("Set-Cookie", [
-          `refreshToken=deleted; Max-Age=0`,
-          cookie.serialize("accessToken", aToken, {
+          `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
+          cookie.serialize("accessToken", accessToken, {
             httpOnly: true,
             maxAge: 1 * 1 * 15 * 60 * 1000,
           }),
-          cookie.serialize("refreshToken", rToken, {
+          cookie.serialize("refreshToken", refreshToken as string, {
             httpOnly: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
           }),
         ]);
       }
 
+      /**
+       * If we have user and book
+       */
       return {
-        props: { user, isAuth: true, book },
+        props: {
+          user,
+          isAuth: true,
+          book,
+          accessToken: aToken,
+          comments: comments,
+        },
       };
     } catch (err) {
-      console.log("Something wrong with getting user", err);
-      return { 
+      /**
+       * If we have user but not book
+       */
+      return {
         props: {
-          user: {}, 
-          isAuth: false, 
-          book 
-        }
+          user,
+          isAuth: true,
+          book: {},
+          accessToken: aToken,
+          comments: [],
+        },
       };
     }
   } catch (err) {
-    console.log("Something wrong with getting single book", err);
-    return {
-      props: {},
-    };
+    /**
+     * If we don't have user but we will try to get books
+     */
+    try {
+      const { slug } = ctx.params as IParams;
+      const bookResponse = await BookService.getBook(slug);
+      const book = bookResponse.data;
+      return {
+        props: {
+          user: {},
+          isAuth: false,
+          book,
+          accessToken: "",
+          comments: [],
+        },
+      };
+    } catch (err) {
+      /**
+       * If we don't have user and books
+       */
+      return {
+        props: {
+          user: {},
+          isAuth: false,
+          books: {},
+          accessToken: "",
+          comments: [],
+        },
+      };
+    }
   }
 };
 

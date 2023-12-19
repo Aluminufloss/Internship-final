@@ -7,13 +7,18 @@ import { IBook } from "@/models/response/Book/IBook";
 import Image from "next/image";
 import { DEFAULT_IMAGE } from "@/utils/constant/constant";
 import { convertRating } from "@/utils/helper/helper";
+import { useAuth } from "@/Contexts/UserContext";
 
 type BookProps = {
   book: IBook;
-  onClick: (book: IBook) => void; 
+  onClick: (book: IBook) => void;
+  isAuth: boolean;
+  isAdded?: boolean;
 };
 
 const Book: React.FC<BookProps> = (props) => {
+  const { state } = useAuth();
+
   const price = Number.isInteger(props.book.price)
     ? `$ ${props.book.price}.00 USD`
     : `$ ${props.book.price} USD`;
@@ -21,7 +26,7 @@ const Book: React.FC<BookProps> = (props) => {
   const rating = convertRating(props.book.rating);
 
   return (
-    <StyledBook book={props.book} onClick={ev => props.onClick(props.book)}>
+    <StyledBook book={props.book} onClick={(ev) => props.onClick(props.book)} isAuth={props.isAuth}>
       <div className="book__image--container">
         <Image
           className="book__image"
@@ -35,7 +40,7 @@ const Book: React.FC<BookProps> = (props) => {
           alt="Book cover"
           unoptimized={true}
         />
-        <button className="book__like-btn"></button>
+        {state.isAuth && <button className="book__like-btn"></button> }
       </div>
       <Text
         className="book__title"
@@ -53,7 +58,7 @@ const Book: React.FC<BookProps> = (props) => {
       >
         {props.book.author}
       </Text>
-      <StarRating className="book__rating" rating={rating}/>
+      <StarRating className="book__rating" rating={rating} />
       <Button
         className="book__buy-btn"
         type="primary"
@@ -73,6 +78,12 @@ const StyledBook = styled.li<BookProps>`
   height: 100%;
   overflow: hidden;
   white-space: nowrap;
+  transition: all 0.3s ease;
+
+  .book__image--container {
+    position: relative;
+    z-index: 100;
+  }
 
   .book {
     &__image {
@@ -91,6 +102,23 @@ const StyledBook = styled.li<BookProps>`
       width: 100%;
     }
 
+    &__like-btn {
+      position: absolute;
+      top: 16px;
+      left: 19px;
+      width: 25px;
+      height: 25px;
+      z-index: 200;
+      background-image: url("/images/buttons/button_save.svg");
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-color: transparent;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
     &__author {
       margin-bottom: 12px;
     }
@@ -98,6 +126,10 @@ const StyledBook = styled.li<BookProps>`
     &__rating {
       margin-bottom: 16px;
     }
+  }
+
+  &:hover {
+    /* transform: scale(1.05); */
   }
 `;
 

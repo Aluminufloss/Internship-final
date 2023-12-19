@@ -28,6 +28,26 @@ class BookContoller {
       next(err);
     }
   }
+
+  async getComments(req, res, next) {
+    try {
+      const comments = await bookService.getComments(req.body.bookID);
+      console.log("suska", comments);
+      return res.json(comments);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async createComment(req, res, next) {
+    try {
+      console.log("dfasdfdfadfadfasdf")
+      const comment = await bookService.createBookComment(req.body, req.user);
+      return res.json(comment);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new BookContoller();

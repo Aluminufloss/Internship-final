@@ -1,4 +1,6 @@
+const CommentDto = require("../dtos/comment-dto");
 const BookModel = require("../models/Book");
+const CommentModel = require("../models/Comment");
 
 class BookService {
   async create(bookData) {
@@ -45,6 +47,22 @@ class BookService {
     }
 
     return book;
+  }
+
+  async getComments(bookID) {
+    const comments = await CommentModel.find({ bookID });
+    return comments;
+  }
+
+  async createBookComment(comment, user) {
+    const {id, username, imagePath} = user;
+    const { bookID, text } = comment;
+
+    const bookComment = await CommentModel.create({ bookID, userID: id, commentText: text, date: new Date(), imagePath, username });
+    
+    console.log("comm", bookComment);
+
+    return bookComment;
   }
 }
 

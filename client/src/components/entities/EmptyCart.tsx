@@ -5,7 +5,10 @@ import Image from "next/image";
 import Text from "../shared/Text";
 import Button from "../shared/Button";
 
-type EmptyCartProps = {};
+type EmptyCartProps = {
+  title: string;
+  text: string;
+};
 
 const EmptyCart: React.FC<EmptyCartProps> = (props) => {
   const router = useRouter();
@@ -15,14 +18,14 @@ const EmptyCart: React.FC<EmptyCartProps> = (props) => {
   }
 
   return (
-    <StyledEmptyCart>
+    <StyledEmptyCart title={props.title} text={props.text}>
       <Text 
         fontSize="medium" 
         fontWeight="bold" 
         color="dark" 
         className="title"
       >
-        Your cart is empty
+        {props.title}
       </Text>
       <Text
         className="subtitle"
@@ -30,7 +33,7 @@ const EmptyCart: React.FC<EmptyCartProps> = (props) => {
         fontWeight="medium"
         color="darkBlue"
       >
-        Add items to cart to make a purchase.Go to the catalogue no.
+        {props.text}
       </Text>
       <Button 
         type="primary" 

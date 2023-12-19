@@ -3,6 +3,7 @@ import { createContext, useContext, useReducer } from "react";
 import { IUser } from "@/models/response/Auth/IUser";
 
 import AuthService from "@/services/AuthService";
+import { IBook } from "@/models/response/Book/IBook";
 
 type AuthentificationState = {
   user: IUser;
@@ -16,10 +17,13 @@ enum ActionKind {
   LoginRejected = "user/rejected",
   GetMe = "user/getMe",
   SetUser = "user/setUser",
+  SetCart = "user/setCart",
   Loading = "loading",
   Registration = "user/registration",
   ChangeInformation = "user/change",
   UploadImage = "user/upload",
+  AddFavorite = "user/favorite",
+  DeleteFavorite = "user/delete",
 }
 
 type LoginAction = {
@@ -45,6 +49,13 @@ type SetUser = {
   };
 };
 
+type SetCart = {
+  type: ActionKind.SetCart;
+  payload: {
+    cart: IBook[];
+  };
+};
+
 type Loading = {
   type: ActionKind.Loading;
   payload?: string;
@@ -64,20 +75,38 @@ type UploadImage = {
   };
 };
 
+type AddFavorite = {
+  type: ActionKind.AddFavorite;
+  payload: {
+    bookID: string;
+  };
+};
+
+type DeleteFavorite = {
+  type: ActionKind.DeleteFavorite;
+  payload: {
+    bookID: string;
+  };
+};
+
 type Action =
   | LoginAction
   | RegistrationAction
   | LoginRejected
   | SetUser
+  | SetCart
   | Loading
   | ChangeInformation
-  | UploadImage;
+  | UploadImage
+  | AddFavorite
+  | DeleteFavorite;
 
 export type UserContextType = {
   state: AuthentificationState;
   login: (email: string, password: string) => void;
   registration: (email: string, password: string, username: string) => void;
   setUser: (user: IUser, isAuth: boolean) => void;
+  setCart: (cart: IBook[]) => void;
   changeInformation: (
     user: IUser,
     newUsername: string,
@@ -85,6 +114,8 @@ export type UserContextType = {
     newPassword: string
   ) => void;
   uploadImage: (image: string, id: string) => void;
+  addFavorite: (bookID: string, accessToken: string) => void;
+  deleteFavorite: (bookID: string, accessToken: string) => void;
 };
 
 const initialState: UserContextType = {
@@ -94,6 +125,8 @@ const initialState: UserContextType = {
       email: "",
       username: "",
       imagePath: "",
+      cart: [],
+      favoriteBooks: [],
     },
     isLoading: false,
     isAuth: false,
@@ -102,8 +135,11 @@ const initialState: UserContextType = {
   login: () => null,
   registration: () => null,
   setUser: () => null,
+  setCart: () => null,
   changeInformation: () => null,
   uploadImage: () => null,
+  addFavorite: () => null,
+  deleteFavorite: () => null,
 };
 
 const UserContext = createContext<UserContextType>(initialState);
@@ -140,6 +176,18 @@ function userReducer(
       };
     }
 
+    case ActionKind.SetCart: {
+      return {
+        ...state,
+        user: {
+          email: state.user.email,
+          favoriteBooks: state.user.favoriteBooks,
+          cart: action.payload.cart,
+          imagePath: state.user.imagePath,
+        },
+      };
+    }
+
     case ActionKind.Registration: {
       return {
         ...state,
@@ -162,6 +210,42 @@ function userReducer(
         user: action.payload.user,
         isAuth: true,
         isLoading: true,
+      };
+    }
+
+    case ActionKind.UploadImage: {
+      return {
+        ...state,
+        user: {
+          email: state.user.email,
+          favoriteBooks: state.user.favoriteBooks,
+          cart: state.user.cart,
+          imagePath: action.payload.imagePath,
+        },
+      };
+    }
+
+    case ActionKind.AddFavorite: {
+      return {
+        ...state,
+        user: {
+          email: state.user.email,
+          favoriteBooks: [...state.user.favoriteBooks, action.payload.bookID],
+          cart: state.user.cart,
+        },
+      };
+    }
+
+    case ActionKind.DeleteFavorite: {
+      return {
+        ...state,
+        user: {
+          email: state.user.email,
+          favoriteBooks: [...state.user.favoriteBooks].filter(
+            (el) => el !== action.payload.bookID
+          ),
+          cart: state.user.cart,
+        },
       };
     }
 
@@ -221,11 +305,23 @@ function UserProvider(
     }
   }
 
+  async function setCart(cart: IBook[]) {
+    dispatch({ type: ActionKind.Loading });
+    try {
+      dispatch({ type: ActionKind.SetCart, payload: { cart } });
+    } catch (err) {
+      console.log("Something wrong");
+    }
+  }
+
   async function uploadImage(id: string, image: string) {
     dispatch({ type: ActionKind.Loading });
     try {
       const response = await AuthService.uploadImage(id, image);
-      dispatch({ type: ActionKind.UploadImage, payload: { imagePath: response.data.imagePath! } });
+      dispatch({
+        type: ActionKind.UploadImage,
+        payload: { imagePath: response.data.imagePath! },
+      });
     } catch (err) {
       console.log("Something wrong");
     }
@@ -243,10 +339,37 @@ function UserProvider(
         user,
         newUsername,
         newEmail,
-        newPassword,
+        newPassword
       );
 
-      dispatch({ type: ActionKind.ChangeInformation, payload: { user: response.data.user } });
+      dispatch({
+        type: ActionKind.ChangeInformation,
+        payload: { user: response.data.user },
+      });
+    } catch (err) {
+      console.log("Something wrong with changing your personal information");
+      throw err;
+    }
+  }
+
+  async function addFavorite(bookID: string, accessToken: string) {
+    dispatch({ type: ActionKind.Loading });
+    try {
+      await AuthService.addFavoriteBook(bookID, accessToken);
+
+      dispatch({ type: ActionKind.AddFavorite, payload: { bookID } });
+    } catch (err) {
+      console.log("Something wrong with changing your personal information");
+      throw err;
+    }
+  }
+
+  async function deleteFavorite(bookID: string, accessToken: string) {
+    dispatch({ type: ActionKind.Loading });
+    try {
+      await AuthService.deleteFavoriteBook(bookID, accessToken);
+
+      dispatch({ type: ActionKind.DeleteFavorite, payload: { bookID } });
     } catch (err) {
       console.log("Something wrong with changing your personal information");
       throw err;
@@ -260,8 +383,11 @@ function UserProvider(
         login,
         registration,
         setUser,
+        setCart,
         changeInformation,
         uploadImage,
+        addFavorite,
+        deleteFavorite,
       }}
     >
       {children}

@@ -1,4 +1,5 @@
 const ApiError = require("../exceptions/api-error");
+const userService = require("../service/user-service");
 const userSevice = require("../service/user-service");
 
 const { validationResult } = require("express-validator");
@@ -71,16 +72,6 @@ class UserContoller {
       const { refreshToken } = req.body;
       const userData = await userSevice.refresh(refreshToken);
 
-      // res.cookie("refreshToken", userData.refreshToken, {
-      //   maxAge: 30 * 24 * 60 * 60 * 1000,
-      //   httpOnly: true,
-      // });
-
-      // res.cookie("accessToken", userData.accessToken, {
-      //   maxAge: 1 * 1 * 15 * 60 * 1000,
-      //   httpOnly: true,
-      // });
-
       return res.json(userData);
     } catch (err) {
       next(err);
@@ -121,6 +112,42 @@ class UserContoller {
       const userWithNewData = await userSevice.change(user, newEmail, newPassword, newUsername);
 
       return res.json(userWithNewData);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getFavorite(req, res, next) {
+    try {
+      const favoriteBooks = await userService.getFavorite(req.user.id);
+      return res.json(favoriteBooks);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async addFavorite(req, res, next) {
+    try {
+      const favoriteBook = await userService.addFavorite(req.user.id, req.body.bookID);
+      return res.json(favoriteBook);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async deleteFavorite(req, res, next) {
+    try {
+      const favoriteBook = await userService.deleteFavorite(req.user.id, req.body.bookID);
+      return res.json(favoriteBook);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getCart(req, res, next) {
+    try {
+      const cart = await userService.getCart(req.user.id);
+      return res.json(cart);
     } catch (err) {
       next(err);
     }

@@ -26,6 +26,7 @@ type Props = {
 
 const User: React.FC<Props> = (props) => {
   const { state, setUser, uploadImage } = useAuth();
+  console.log("Suka", state.user);
 
   useEffect(() => {
     (async () => {
@@ -73,7 +74,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     if (typeof rToken !== 'undefined') {
       console.log("We're here");
       ctx.res.setHeader("Set-Cookie", [
-        `refreshToken=deleted; Max-Age=0`,
+        `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
         cookie.serialize("accessToken", aToken, {
           httpOnly: true,
           maxAge: 1 * 1 * 15 * 60 * 1000,

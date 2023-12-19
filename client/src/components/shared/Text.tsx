@@ -6,6 +6,7 @@ type TextProps = {
   color?: "dark" | "white" | "darkBlue" | "darkGrey";
   lineHeight?: string;
   fontSize?:
+    "superSmall"
     | "small"
     | "smallBig"
     | "medium"
@@ -14,7 +15,7 @@ type TextProps = {
     | "big"
     | "large";
   fontWeight?:
-    | "light"
+    "light"
     | "normal"
     | "medium"
     | "semiBold"
@@ -24,10 +25,9 @@ type TextProps = {
 };
 
 const Text = styled.p<TextProps>`
-  font-size: ${(props) => props.fontSize || `${props.theme.fontSizes.medium}`};
-  font-weight: ${(props) =>
-    props.fontWeight || `${props.theme.fontWeights.normal}`};
-  color: ${(props) => props.color || `${props.theme.colors.dark}`};
+  font-size: ${(props) => `${props.fontSize}` || `${props.theme.fontSizes.medium}`};
+  font-weight: ${(props) => `${props.fontWeight}` || `${props.theme.fontWeights.normal}`};
+  color: ${(props) => `${props.color}` || `${props.theme.colors.dark}`};
   line-height: ${(props) => props.lineHeight};
 `;
 

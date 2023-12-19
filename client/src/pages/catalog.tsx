@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { GetServerSideProps, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import cookie from "cookie";
 
 import Layout from "@/components/layout/Layout";
@@ -16,11 +16,12 @@ import BannerBottom from "@/components/entities/BannerBottom";
 import { useAuth } from "@/Contexts/UserContext";
 
 import AuthService from "@/services/AuthService";
+import BookService from "@/services/BookService";
 
 import { IUser } from "@/models/response/Auth/IUser";
-import BookService from "@/services/BookService";
-import { useBook } from "@/Contexts/BookContext";
 import { IBook } from "@/models/response/Book/IBook";
+
+import { useBook } from "@/Contexts/BookContext";
 
 type Props = {
   user: IUser;
@@ -51,7 +52,7 @@ const Home: React.FC<Props> = (props) => {
 
         <Filtres />
 
-        <BookList books={props.books} />
+        <BookList books={props.books} isAuth={props.isAuth}/>
 
         <BannerBottom
           bannerTitle="Authorize now"
@@ -66,22 +67,19 @@ const Home: React.FC<Props> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
-    // console.log("Cookie", ctx.req.cookies)
     const { refreshToken, accessToken } = ctx.req.cookies;
-    // console.log("Suka access", accessToken);
 
     const response = await AuthService.getMe(
       refreshToken as string,
       accessToken as string
     );
 
-    // console.log("Resp", response.data);
     const { user, refreshToken: rToken, accessToken: aToken } = response.data;
 
     if (typeof rToken !== 'undefined') {
       console.log("We're here");
       ctx.res.setHeader("Set-Cookie", [
-        `refreshToken=deleted; Max-Age=0`,
+        `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
         cookie.serialize("accessToken", aToken, {
           httpOnly: true,
           maxAge: 1 * 1 * 15 * 60 * 1000,

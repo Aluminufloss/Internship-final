@@ -80,11 +80,15 @@ a {
   text-decoration: none;
 }
 
+textarea {
+  border: none;
+}
+
 ul {
   list-style-type: none;
 }
 
-select:focus {
+select:focus, textarea:focus {
   border: none;
   outline: none;
 }

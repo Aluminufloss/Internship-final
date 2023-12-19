@@ -21,8 +21,17 @@ router.post("/upload", userController.uploadImage);
 router.post("/refresh", userController.refresh);
 router.post("/change", userController.changeInfo);
 
+router.post("/cart", authMiddleware, userController.getCart);
+
+router.post("/favorite", authMiddleware, userController.getFavorite);
+router.post("/favoriteAdd", authMiddleware, userController.addFavorite);
+router.post("/favoriteDelete", authMiddleware, userController.addFavorite);
+
 router.post("/book", bookController.createBook);
-router.get("/getBooks", bookController.getBooks);
 router.post("/getBook", bookController.getBookById);
+router.get("/getBooks", bookController.getBooks);
+
+router.post("/comments", bookController.getComments);
+router.post("/commentCreate", authMiddleware, bookController.createComment);
 
 module.exports = router;

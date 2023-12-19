@@ -2,6 +2,7 @@ import $api from "../axios/index";
 import { AxiosResponse } from "axios";
 import { AuthRespone, UploadImageRespone } from "../models/response/Auth/AuthResponse";
 import { IUser } from "@/models/response/Auth/IUser";
+import { BookResponse } from "@/models/response/Book/BookResponse";
 
 export default class AuthService {
   static async login(
@@ -49,5 +50,25 @@ export default class AuthService {
 
   static async uploadImage(id: string, image: string): Promise<AxiosResponse<UploadImageRespone>> {
     return $api.post("/upload", { id, image });
+  }
+
+  static async getFavoriteBooks(accessToken: string, refreshToken: string): Promise<AxiosResponse<BookResponse>> {
+    return $api.post("/favorite", { accessToken, refreshToken });
+  }
+
+  static async addFavoriteBook(bookID: string, accessToken: string): Promise<AxiosResponse<BookResponse>> {
+    return $api.post("/favoriteAdd", { bookID, accessToken });
+  }
+
+  static async deleteFavoriteBook(bookID: string, accessToken: string): Promise<AxiosResponse<BookResponse>> {
+    return $api.post("/favoriteDelete", { bookID, accessToken });
+  }
+
+  static async createComment(bookID: string, text: string, accessToken: string): Promise<AxiosResponse<UploadImageRespone>> {
+    return $api.post("/commentCreate", { bookID, text, accessToken });
+  }
+
+  static async getCart(accessToken: string, refreshToken: string): Promise<AxiosResponse<BookResponse>> {
+    return $api.post("/cart", { accessToken, refreshToken });
   }
 }

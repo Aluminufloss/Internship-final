@@ -3,6 +3,7 @@ import BookService from "@/services/BookService";
 import { createContext, useContext, useReducer } from "react";
 
 type BookState = {
+  userID: string;
   books: IBook[];
   isLoading: boolean;
 };
@@ -31,6 +32,7 @@ export type BookContextType = {
 
 const initialState: BookContextType = {
   state: {
+    userID: "",
     books: [],
     isLoading: false,
   },

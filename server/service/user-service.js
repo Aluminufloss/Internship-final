@@ -1,8 +1,10 @@
 const bcrypt = require("bcrypt");
 
 const UserModel = require("../models/User");
+const BookModel = require("../models/Book");
 
 const UserDto = require("../dtos/user-dto");
+
 const tokenService = require("./token-service");
 
 const ApiError = require("../exceptions/api-error");
@@ -119,11 +121,12 @@ class UserService {
 
   async change(user, email, password, username) {
     const userFromDB = await UserModel.findOne({ email: user.email });
+    console.log("sussy User", userFromDB);
     if (!userFromDB) {
       throw ApiError.BadRequest("Пользователь с таким email не был найден");
     }
 
-    const newEmail = email ?? userFromDB.email;
+    const newEmail = email || userFromDB.email;
     const newUserName = username ?? userFromDB.username;
     const newPassword = password ?? "";
 
@@ -145,13 +148,57 @@ class UserService {
       );
     }
 
-    const userWithNewData = await UserModel.updateOne(
+    await UserModel.updateOne(
       { email: user.email },
       { email: newEmail, username: newUserName },
       { new: true }
     );
 
+    const userWithNewData = await UserModel.findOne({ _id: userFromDB._id });
+
     return userWithNewData;
+  }
+
+  async getFavorite(id) {
+    const user = await UserModel.findOne({ _id: id });
+
+    if (!user) {
+      throw ApiError.BadRequest("Пользователь с таким id не был найден");
+    }
+
+    const favoriteBooks = [];
+
+    for (let id of user.favoriteBooks) {
+      const book = await BookModel.findOne({ _id: id }); 
+      favoriteBooks.push(book);
+    }
+
+    return favoriteBooks;
+  }
+
+  async getCart(id) {
+    const user = await UserModel.findOne({ _id: id });
+
+    if (!user) {
+      throw ApiError.BadRequest("Пользователь с таким id не был найден");
+    }
+
+    const cart = [];
+
+    for (let id of user.cart) {
+      const book = await BookModel.findOne({ _id: id }); 
+      cart.push(book);
+    }
+
+    return cart;
+  }
+
+  async addFavorite(id, bookID) {
+    await UserModel.updateOne({ _id: id }, { $push: { favoriteBooks: bookID } });
+  }
+
+  async deleteFavorite(id, bookID) {
+    await UserModel.updateOne({ _id: id}, { $pull: { favoriteBooks: bookID } });
   }
 }
 

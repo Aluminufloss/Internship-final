@@ -42,9 +42,9 @@ const Header: React.FC<HeaderProps> = (props) => {
         Log In/Sign Up
       </Button> : 
         <div className="btn-group">
-          <ButtonLink className="btn-group__button" href="/cart" iconName="button_cart"/>
-          <ButtonLink className="btn-group__button" href="/cart" iconName="button_save"/>
-          <ButtonLink className="btn-group__button" href="/user" iconName="button_user"/>
+          <ButtonLink className="btn-group__button" href="/cart" iconname="button_cart"/>
+          <ButtonLink className="btn-group__button" href="/favorite" iconname="button_save"/>
+          <ButtonLink className="btn-group__button" href="/user" iconname="button_user"/>
         </div>
       }
       <Search type="medium" className="search" />

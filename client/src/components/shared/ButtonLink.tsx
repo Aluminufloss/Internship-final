@@ -4,19 +4,19 @@ import styled from "styled-components";
 
 type ButtonIconProps = {
   href: string;
-  iconName: string;
+  iconname: string;
   icon?: string;
   className?: string;
 };
 
 const ButtonLink: React.FC<ButtonIconProps> = (props) => {
-  const icon = `${STATIC_PATHS.buttons}/${props.iconName}.svg`;
+  const icon = `${STATIC_PATHS.buttons}/${props.iconname}.svg`;
 
   return (
     <StyledButtonLink
       href={props.href}
       className={props.className}
-      iconName={props.iconName}
+      iconname={props.iconname}
       icon={icon}
     />
   );

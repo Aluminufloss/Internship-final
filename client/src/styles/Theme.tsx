@@ -18,6 +18,7 @@ const theme = {
   },
 
   fontSizes: {
+    superSmall: "10px",
     small: "12px",
     smallBig: "14px",
     medium: "16px",

@@ -8,18 +8,29 @@ import { IBook } from "@/models/response/Book/IBook";
 
 type BookListProps = {
   books: IBook[];
-}
+  isAuth: boolean;
+  className?: string;
+  isAdded?: boolean;
+};
 
 const BookList: React.FC<BookListProps> = (props) => {
   const router = useRouter();
 
   function handleClick(book: IBook) {
-    router.push(`/catalog/${book._id}`)
+    router.push(`/catalog/${book._id}`);
   }
 
   return (
-    <StyledBookList>
-      {props.books.map((book) => <Book book={book} onClick={handleClick}/>)}
+    <StyledBookList className={props.className}>
+      {props.books.map((book) => (
+        <Book
+          book={book}
+          isAdded={props.isAdded}
+          onClick={handleClick}
+          key={book._id}
+          isAuth={props.isAuth}
+        />
+      ))}
     </StyledBookList>
   );
 };

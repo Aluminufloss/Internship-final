@@ -32,7 +32,7 @@ const Filtres: React.FC<FilterProps> = (props) => {
       </Text>
         <div className="filter__select--container">
           <select className="filter__select--genre">
-            <option value="Genre" selected>
+            <option value="Genre">
               Genre
             </option>
             <option value="Fiction">Fiction</option>
