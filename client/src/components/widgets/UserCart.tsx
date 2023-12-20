@@ -15,8 +15,6 @@ const UserCart: React.FC<CartProps> = (props) => {
     setPrice(price + bookPrice);
   }
 
-  console.log("susys", price)
-
   return (
     <StyledUserCart className={props.className} cart={props.cart}>
       {props.cart.map((book, index) => (

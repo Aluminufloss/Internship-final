@@ -145,7 +145,7 @@ export type UserContextType = {
   ) => void;
   uploadImage: (image: string, id: string) => void;
   addFavorite: (bookID: string, accessToken: string) => void;
-  deleteFavorite: (bookID: string, accessToken: string) => void;
+  deleteFavorite: (bookID: string, accessToken: string, refreshToken: string) => void;
   deleteFromCart: (bookID: string, accessToken: string, refreshToken: string) => void;
   addToCart: (bookID: string, accessToken: string, refreshToken: string) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
@@ -423,10 +423,10 @@ function UserProvider(
     }
   }
 
-  async function deleteFavorite(bookID: string, accessToken: string) {
+  async function deleteFavorite(bookID: string, accessToken: string, refreshToken: string) {
     dispatch({ type: ActionKind.Loading });
     try {
-      await AuthService.deleteFavoriteBook(bookID, accessToken);
+      await AuthService.deleteFavoriteBook(bookID, accessToken, refreshToken);
 
       dispatch({ type: ActionKind.DeleteFavorite, payload: { bookID } });
     } catch (err) {

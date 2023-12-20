@@ -1,32 +1,47 @@
 import React, { useEffect } from "react";
 import { GetServerSideProps } from "next";
-import cookie from "cookie";
 
 import Footer from "@/components/widgets/Footer";
 import Header from "@/components/widgets/Header";
+import BookList from "@/components/widgets/BookList";
+
+import EmptyCart from "@/components/entities/EmptyCart";
 
 import Layout from "@/components/layout/Layout";
 
 import AuthService from "@/services/AuthService";
 
 import { useAuth } from "@/Contexts/UserContext";
-import EmptyCart from "@/components/entities/EmptyCart";
-import BookList from "@/components/widgets/BookList";
+
 import { IBook } from "@/models/response/Book/IBook";
 import { IUser } from "@/models/response/Auth/IUser";
+
+import { checkTokens } from "@/utils/helper/helper";
+import { useBook } from "@/Contexts/BookContext";
 
 type Props = {
   books: IBook[];
   user: IUser;
   isAuth: boolean;
+  tokens?: {
+    accessToken: string;
+    refreshToken: string;
+  };
 };
 
 const Cart: React.FC<Props> = (props) => {
-  const { state, setUser, deleteFavorite } = useAuth();
+  const { state, setUser, setTokens } = useAuth();
+  const { stateBook, setBooks } = useBook();
 
   useEffect(() => {
     (async () => {
       setUser(props.user, props.isAuth);
+      setBooks(props.books);
+      console.log("books", props.books);
+
+      if (typeof props.tokens !== "undefined") {
+        setTokens(props.tokens.accessToken, props.tokens.refreshToken);
+      }
     })();
   }, []);
 
@@ -63,23 +78,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     );
 
     const { user } = response.data;
-    const rToken = response.config.headers.token;
-    const aToken = response.config.headers.Authorization.split(" ")[1];
-
-    if (typeof rToken !== "undefined") {
-      console.log("We're here");
-      ctx.res.setHeader("Set-Cookie", [
-        `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
-        cookie.serialize("accessToken", aToken, {
-          httpOnly: true,
-          maxAge: 1 * 1 * 15 * 60 * 1000,
-        }),
-        cookie.serialize("refreshToken", rToken, {
-          httpOnly: true,
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        }),
-      ]);
-    }
+    const { context, aToken, rToken } = checkTokens(response, ctx);
+    ctx = context;
 
     /**
      * If we have user, we will try to get books
@@ -88,37 +88,35 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       // console.log("Token", aToken);
       const responseBooks = await AuthService.getFavoriteBooks(aToken, rToken);
       const books = responseBooks.data;
-      const refreshToken = responseBooks.config.headers.token;
-      const accessToken =
-        responseBooks.config.headers.Authorization.split(" ")[1];
-
-      if (typeof refreshToken !== "undefined") {
-        console.log("We're here 2");
-        ctx.res.setHeader("Set-Cookie", [
-          `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
-          cookie.serialize("accessToken", accessToken, {
-            httpOnly: true,
-            maxAge: 1 * 1 * 15 * 60 * 1000,
-          }),
-          cookie.serialize("refreshToken", refreshToken as string, {
-            httpOnly: true,
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-          }),
-        ]);
-      }
+      const {
+        context,
+        aToken: accessToken,
+        rToken: refreshToken,
+      } = checkTokens(responseBooks, ctx);
+      ctx = context;
 
       /**
        * If we have user and books
        */
       return {
-        props: { user, isAuth: true, books },
+        props: {
+          user,
+          isAuth: true,
+          books,
+          tokens: { accessToken, refreshToken },
+        },
       };
     } catch (err) {
       /**
        * If we have user but not books
        */
       return {
-        props: { user, isAuth: true, books: {} },
+        props: {
+          user,
+          isAuth: true,
+          books: {},
+          tokens: { accessToken, refreshToken },
+        },
       };
     }
   } catch (err) {

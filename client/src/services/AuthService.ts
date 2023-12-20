@@ -60,8 +60,8 @@ export default class AuthService {
     return $api.post("/favoriteAdd", { bookID, accessToken });
   }
 
-  static async deleteFavoriteBook(bookID: string, accessToken: string): Promise<AxiosResponse<BookResponse>> {
-    return $api.post("/favoriteDelete", { bookID, accessToken });
+  static async deleteFavoriteBook(bookID: string, accessToken: string, refreshToken: string): Promise<AxiosResponse<BookResponse>> {
+    return $api.post("/favoriteDelete", { bookID, accessToken, refreshToken });
   }
 
   static async createComment(bookID: string, text: string, accessToken: string): Promise<AxiosResponse<UploadImageRespone>> {

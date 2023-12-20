@@ -53,11 +53,13 @@ const Book: React.FC<BookProps> = (props) => {
           alt="Book cover"
           unoptimized={true}
         />
-        {state.isAuth && !props.isAdded ? (
-          <button className="book__like-btn"></button>
-        ) : (
-          <button className="book__like-btn book__like-btn--added"></button>
-        )}
+        {state.isAuth && (
+          !props.isAdded ? (
+            <button className="book__like-btn"></button>
+          ) : (
+            <button className="book__like-btn book__like-btn--added"></button>
+          ))
+        }
       </div>
       <Text
         className="book__title"

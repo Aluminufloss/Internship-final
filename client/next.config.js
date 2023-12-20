@@ -5,7 +5,7 @@ const nextConfig = {
     styledComponents: true
   },
   // images: {
-  //   path: "/",
+  //   path: "/images",
   // },
 }
 

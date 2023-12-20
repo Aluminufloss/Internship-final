@@ -23,6 +23,7 @@ import { IBook } from "@/models/response/Book/IBook";
 
 import { useBook } from "@/Contexts/BookContext";
 import { checkTokens } from "@/utils/helper/helper";
+import Pagination from "@/components/entities/Pagination";
 
 type Props = {
   user: IUser;
@@ -42,7 +43,7 @@ const Home: React.FC<Props> = (props) => {
     (async () => {
       setUser(props.user, props.isAuth);
       setBooks(props.books);
-      console.log("Suka", props.tokens);
+
       if (typeof props.tokens !== 'undefined') {
         setTokens(props.tokens.accessToken, props.tokens.refreshToken);
       }
@@ -61,7 +62,13 @@ const Home: React.FC<Props> = (props) => {
 
         <Filtres />
 
-        <BookList books={props.books} isAuth={props.isAuth}/>
+        <BookList 
+          books={props.books} 
+          isAuth={props.isAuth} 
+          isAdded={false}
+        />
+
+        <Pagination />
 
         <BannerBottom
           bannerTitle="Authorize now"

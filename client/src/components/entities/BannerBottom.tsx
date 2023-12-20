@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
+import { useRouter } from "next/router";
+
 import Text from "../shared/Text";
 import Button from "../shared/Button";
 
@@ -11,6 +13,12 @@ type BannerProps = {
 };
 
 const BannerBottom: React.FC<BannerProps> = (props) => {
+  const router = useRouter();
+
+  function handleClick() {
+    router.push('/login');
+  }
+
   return (
     <StyledBanner>
       <Image
@@ -31,6 +39,7 @@ const BannerBottom: React.FC<BannerProps> = (props) => {
         type="primary"
         fontSize="small"
         className="button"
+        onClick={handleClick}
       >
         {props.buttonText}
       </Button>

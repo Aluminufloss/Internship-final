@@ -1,5 +1,4 @@
 import { IBook } from "@/models/response/Book/IBook";
-import BookService from "@/services/BookService";
 import { createContext, useContext, useReducer } from "react";
 
 type BookState = {
@@ -25,12 +24,12 @@ type Loading = {
 type Action = SetBooksAction | Loading;
 
 export type BookContextType = {
-  state: BookState;
+  stateBook: BookState;
   setBooks: (books: IBook[]) => void;
 }
 
 const initialState: BookContextType = {
-  state: {
+  stateBook: {
     books: [],
     isLoading: false,
   },
@@ -68,9 +67,10 @@ function BookProvider(
   { children }: BookProviderType,
   initialState: BookState,
 ) {
-  const [state, dispatch] = useReducer(bookReducer, initialState);
+  const [stateBook, dispatch] = useReducer(bookReducer, initialState);
 
   async function setBooks(books: IBook[]) {
+    console.log("yep we're here")
     dispatch({ type: ActionKind.Loading });
 
     try {
@@ -83,7 +83,7 @@ function BookProvider(
   return (
     <BookContext.Provider
       value={{
-        state,
+        stateBook,
         setBooks,
       }}
     >

@@ -31,7 +31,7 @@ const BookList: React.FC<BookListProps> = (props) => {
           isAuth={props.isAuth}
         />
       ))}
-    </StyledBookList>
+    </StyledBookList> 
   );
 };
 
@@ -40,9 +40,7 @@ const StyledBookList = styled.ul`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
   grid-template-rows: repeat(2, minmax(333px, min-content));
-  grid-auto-rows: 333px;
   gap: 30px 20px;
-  margin-bottom: 40px;
 `;
 
 export default BookList;

@@ -10,9 +10,12 @@ class BookService {
       author,
       rating,
       price,
+      genre,
       description,
-      back,
+      paperback,
+      hardcover,
       amount,
+      imagePath,
     } = bookData;
 
     const book = await BookModel.create({
@@ -21,9 +24,12 @@ class BookService {
       author,
       rating,
       price,
+      genre,
       description,
-      back,
+      imagePath,
       amount,
+      paperback,
+      hardcover,
     });
 
     return book.save();

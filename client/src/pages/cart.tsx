@@ -51,14 +51,14 @@ const Cart: React.FC<Props> = (props) => {
   return (
     <Layout>
       <Header isAuth={state.isAuth} />
-      {!props.cart.length ? (
+      {state.user.cart.length === 0 ? (
         <EmptyCart
           title="Your cart is empty"
           text="Add items to cart to make a purchase.Go to the catalogue no."
         />
       ) : (
         <StyledCart>
-          <UserCart cart={props.cart}/>
+          {state.user.cart && <UserCart cart={state.user.cart}/>}
           <div className="price">
             <Text className="price__text" color="dark">
               Total:
@@ -151,7 +151,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       );
 
       const cart = cartResponse.data;
-      console.log("Ebat thoy rot", cartResponse)
       const {
         context,
         aToken: accessToken,
@@ -166,7 +165,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       console.log(err);
 
       return {
-        props: { user, isAuth: true, cart: [], tokens: { aToken, rToken } },
+        props: { user, isAuth: true, cart: [], tokens: { accessToken, refreshToken } },
       };
     }
   } catch (err) {
