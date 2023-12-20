@@ -14,7 +14,7 @@ const EmptyCart: React.FC<EmptyCartProps> = (props) => {
   const router = useRouter();
 
   function handleClick() {
-    router.push('/');
+    router.push('/catalog');
   }
 
   return (

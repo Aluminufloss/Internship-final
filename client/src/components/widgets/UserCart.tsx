@@ -11,37 +11,21 @@ type CartProps = {
 const UserCart: React.FC<CartProps> = (props) => {
   const [price, setPrice] = useState(0);
 
+  function handleAddToTheTotal(bookPrice: number) {
+    setPrice(price + bookPrice);
+  }
+
+  console.log("susys", price)
+
   return (
     <StyledUserCart className={props.className} cart={props.cart}>
-      {props.cart.map((book) => (
+      {props.cart.map((book, index) => (
         <CartBook
           book={book}
-          key={book._id}
+          key={index}
+          handleAddToTheTotal={handleAddToTheTotal}
         />
       ))}
-      <div className="price">
-        <Text className="price__text" color="dark">Total:</Text>
-        <Text className="price__amount" color="dark">38</Text>
-      </div>
-
-      <div className="buttons__group">
-        <Button
-          className="buttons__group--catalog"
-          type="secondary"
-          width="268"
-          height="35"
-        >
-          Continue shopping
-        </Button>
-        <Button
-          className="buttons__group--checkout"
-          type="primary"
-          width="174"
-          height="35"
-        >
-          Checkout
-        </Button>
-      </div>
     </StyledUserCart>
   );
 };

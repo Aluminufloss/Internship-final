@@ -4,6 +4,7 @@ import { AxiosResponse } from "axios";
 import { GetServerSidePropsContext, PreviewData } from "next";
 import { ParsedUrlQuery } from "querystring";
 import cookie from "cookie";
+import { CommentResponse } from "@/models/response/Comment/CommentResponse";
 
 type CheckTokensResult = {
   context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>;
@@ -94,7 +95,7 @@ export function correctPrice(price: number): string {
 }
 
 export function checkTokens(
-  response: AxiosResponse<AuthRespone, any>,
+  response: AxiosResponse<AuthRespone | CommentResponse, any>,
   context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
 ): CheckTokensResult {
   if (response.config && response.config.headers) {

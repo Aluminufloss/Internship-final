@@ -40,8 +40,7 @@ const LinkTo: React.FC<LinkProps> = (props) => {
 
 const StyledLink = styled(Link)<LinkProps>`
   font-size: ${(props) => props.fontSize || `${props.theme.fontSizes.medium}`};
-  font-weight: ${(props) =>
-    props.fontWeight || `${props.theme.fontWeights.normal}`};
+  font-weight: ${(props) => props.fontWeight || `${props.theme.fontWeights.normal}`};
   color: ${(props) => props.color || `${props.theme.colors.dark}`};
 `;
 

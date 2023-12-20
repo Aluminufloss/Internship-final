@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { ParsedUrlQuery } from "querystring";
-import cookie from "cookie";
 
 import BookService from "@/services/BookService";
 import AuthService from "@/services/AuthService";
 
 import { IBook } from "@/models/response/Book/IBook";
 import { IUser } from "@/models/response/Auth/IUser";
+import { IComment } from "@/models/response/Comment/IComment";
 
 import Layout from "@/components/layout/Layout";
 
@@ -18,8 +18,8 @@ import { useAuth } from "@/Contexts/UserContext";
 import BookInformation from "@/components/widgets/BookInformation";
 import BannerBottom from "@/components/entities/BannerBottom";
 import CreateComment from "@/components/features/CreateComment";
-import { IComment } from "@/models/response/Comment/IComment";
 import Comments from "@/components/widgets/Comments";
+import { checkTokens } from "@/utils/helper/helper";
 
 type BookDetailsProps = {
   book: IBook;
@@ -77,24 +77,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       accessToken as string
     );
 
-    const { user, refreshToken: rToken, accessToken: aToken } = response.data;
-
-    if (typeof rToken !== "undefined") {
-      console.log("We're here");
-      ctx.res.setHeader("Set-Cookie", [
-        `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
-        cookie.serialize("accessToken", aToken, {
-          httpOnly: true,
-          maxAge: 1 * 1 * 15 * 60 * 1000,
-          path: "/",
-        }),
-        cookie.serialize("refreshToken", rToken, {
-          httpOnly: true,
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-          path: "/",
-        }),
-      ]);
-    }
+    const { user } = response.data;
+    const { context, aToken, rToken } = checkTokens(response, ctx);
+    ctx = context;
 
     /**
      * If we have user, we will try to get books
@@ -106,24 +91,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
       const commentsResponse = await BookService.getComments(book._id as string, aToken);
       const comments = commentsResponse.data;
-
-      const refreshToken = commentsResponse.config.headers.token;
-      const accessToken = commentsResponse.config.headers.Authorization.split(" ")[1];
-
-      if (typeof refreshToken !== 'undefined') {
-        console.log("We're here 2");
-        ctx.res.setHeader("Set-Cookie", [
-          `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
-          cookie.serialize("accessToken", accessToken, {
-            httpOnly: true,
-            maxAge: 1 * 1 * 15 * 60 * 1000,
-          }),
-          cookie.serialize("refreshToken", refreshToken as string, {
-            httpOnly: true,
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-          }),
-        ]);
-      }
+      const { context, aToken: accessToken, rToken: refreshToken } = checkTokens(commentsResponse, ctx);
+      ctx = context;
 
       /**
        * If we have user and book
@@ -133,7 +102,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user,
           isAuth: true,
           book,
-          accessToken: aToken,
+          accessToken: accessToken,
           comments: comments,
         },
       };
@@ -146,7 +115,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user,
           isAuth: true,
           book: {},
-          accessToken: aToken,
+          accessToken: accessToken,
           comments: [],
         },
       };

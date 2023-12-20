@@ -22,21 +22,30 @@ import { IUser } from "@/models/response/Auth/IUser";
 import { IBook } from "@/models/response/Book/IBook";
 
 import { useBook } from "@/Contexts/BookContext";
+import { checkTokens } from "@/utils/helper/helper";
 
 type Props = {
   user: IUser;
   isAuth: boolean;
   books: IBook[];
+  tokens?: {
+    accessToken: string,
+    refreshToken: string,
+  };
 };
 
 const Home: React.FC<Props> = (props) => {
-  const { setUser } = useAuth();
+  const { setUser, setTokens } = useAuth();
   const { setBooks } = useBook();
 
   useEffect(() => {
     (async () => {
       setUser(props.user, props.isAuth);
       setBooks(props.books);
+      console.log("Suka", props.tokens);
+      if (typeof props.tokens !== 'undefined') {
+        setTokens(props.tokens.accessToken, props.tokens.refreshToken);
+      }
     })();
   }, []);
 
@@ -74,22 +83,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       accessToken as string
     );
 
-    const { user, refreshToken: rToken, accessToken: aToken } = response.data;
-
-    if (typeof rToken !== 'undefined') {
-      console.log("We're here");
-      ctx.res.setHeader("Set-Cookie", [
-        `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
-        cookie.serialize("accessToken", aToken, {
-          httpOnly: true,
-          maxAge: 1 * 1 * 15 * 60 * 1000,
-        }),
-        cookie.serialize("refreshToken", rToken, {
-          httpOnly: true,
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        }),
-      ]);
-    }
+    const { user } = response.data;
+    const { context, aToken, rToken } = checkTokens(response, ctx);
+    ctx = context;
 
     /**
      * If we have user, we will try to get books
@@ -102,14 +98,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
      * If we have user and books
      */
       return {
-        props: { user, isAuth: true, books },
+        props: { user, isAuth: true, books, tokens: { accessToken: aToken, refreshToken: rToken } },
       };
     } catch (err) {
       /**
      * If we have user but not books
      */
       return {
-        props: { user, isAuth: true, books: {} },
+        props: { user, isAuth: true, books: {}, tokens: { accessToken: aToken, refreshToken: rToken } },
       };
     }
   } catch (err) {
@@ -124,6 +120,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user: {},
           isAuth: false,
           books,
+          tokens: { aToken: "", rToken: "" }
         },
       };
     } catch (err) {
@@ -135,6 +132,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user: {},
           isAuth: false,
           books: {},
+          tokens: { aToken: "", rToken: "" }
         },
       };
     }

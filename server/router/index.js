@@ -23,6 +23,7 @@ router.post("/change", userController.changeInfo);
 
 router.post("/cart", authMiddleware, userController.getCart);
 router.post("/cartDelete", authMiddleware, userController.deleteFromCart);
+router.post("/cartAdd", authMiddleware, userController.addToCart);
 
 router.post("/favorite", authMiddleware, userController.getFavorite);
 router.post("/favoriteAdd", authMiddleware, userController.addFavorite);

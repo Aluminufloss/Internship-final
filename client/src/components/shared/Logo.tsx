@@ -1,7 +1,9 @@
+import { useRouter } from 'next/router';
 import styled, { css } from 'styled-components';
 
 type LogoProps = {
   type: "smallWhite" | "largeWhite" | "smallBlack" | "largeBlack";
+  className?: string;
 }
 
 const TYPE = {
@@ -27,7 +29,23 @@ const TYPE = {
   `,
 };
 
-const Logo = styled.div<LogoProps>`
+const Logo: React.FC<LogoProps> = (props) => {
+  const router = useRouter();
+
+  function handleClick() {
+    router.push('/catalog');
+  }
+
+  return (
+    <StyledLogo 
+      type={props.type} 
+      onClick={handleClick} 
+      className={props.className}
+    />
+  );
+};
+
+const StyledLogo = styled.div<LogoProps>`
   ${(props) => props.type && TYPE[props.type]}
   background-repeat: no-repeat;
   background-size: cover;

@@ -161,6 +161,15 @@ class UserContoller {
       next(err);
     }
   }
+
+  async addToCart(req, res, next) {
+    try {
+      await userService.addToCart(req.user.id, req.body.bookID);
+      return res.json("Success");
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new UserContoller();

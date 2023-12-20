@@ -10,6 +10,8 @@ type AuthentificationState = {
   isLoading: boolean;
   isAuth: boolean;
   error: string;
+  accessToken?: string;
+  refreshToken?: string;
 };
 
 enum ActionKind {
@@ -25,6 +27,8 @@ enum ActionKind {
   UploadImage = "user/upload",
   AddFavorite = "user/favorite",
   DeleteFavorite = "user/delete",
+  SetTokens = "user/tokens",
+  AddToCart = "user/addToCart",
 }
 
 type LoginAction = {
@@ -97,6 +101,21 @@ type DeleteFavorite = {
   };
 };
 
+type SetTokens = {
+  type: ActionKind.SetTokens;
+  payload: {
+    accessToken: string,
+    refreshToken: string,
+  };
+};
+
+type AddToCart = {
+  type: ActionKind.AddToCart;
+  payload: {
+    bookID: string;
+  };
+};
+
 type Action =
   | LoginAction
   | RegistrationAction
@@ -108,7 +127,9 @@ type Action =
   | UploadImage
   | AddFavorite
   | DeleteFavorite
-  | DeleteFromCart;
+  | DeleteFromCart
+  | SetTokens
+  | AddToCart;
 
 export type UserContextType = {
   state: AuthentificationState;
@@ -126,6 +147,8 @@ export type UserContextType = {
   addFavorite: (bookID: string, accessToken: string) => void;
   deleteFavorite: (bookID: string, accessToken: string) => void;
   deleteFromCart: (bookID: string, accessToken: string, refreshToken: string) => void;
+  addToCart: (bookID: string, accessToken: string, refreshToken: string) => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
 };
 
 const initialState: UserContextType = {
@@ -141,6 +164,8 @@ const initialState: UserContextType = {
     isLoading: false,
     isAuth: false,
     error: "",
+    accessToken: "",
+    refreshToken: "",
   },
   login: () => null,
   registration: () => null,
@@ -149,8 +174,10 @@ const initialState: UserContextType = {
   changeInformation: () => null,
   uploadImage: () => null,
   addFavorite: () => null,
+  addToCart: () => null,
   deleteFromCart: () => null,
   deleteFavorite: () => null,
+  setTokens: () => null,
 };
 
 const UserContext = createContext<UserContextType>(initialState);
@@ -270,6 +297,14 @@ function userReducer(
           ),
           favoriteBooks: state.user.favoriteBooks,
         },
+      };
+    }
+    
+    case ActionKind.SetTokens: {
+      return {
+        ...state,
+        accessToken: action.payload.accessToken,
+        refreshToken: action.payload.refreshToken,
       };
     }
 
@@ -412,6 +447,28 @@ function UserProvider(
     }
   }
 
+  async function addToCart(bookID: string, accessToken: string, refreshToken: string) {
+    dispatch({ type: ActionKind.Loading });
+    try {
+      await AuthService.addToCart(bookID, accessToken, refreshToken);
+
+      dispatch({ type: ActionKind.AddToCart, payload: { bookID } });
+    } catch (err) {
+      console.log("Something wrong with changing your personal information");
+      throw err;
+    }
+  }
+
+  async function setTokens(accessToken: string, refreshToken: string) {
+    dispatch({ type: ActionKind.Loading });
+    try {
+      dispatch({ type: ActionKind.SetTokens, payload: { accessToken, refreshToken } });
+    } catch (err) {
+      console.log("Something wrong with changing your personal information");
+      throw err;
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -425,6 +482,8 @@ function UserProvider(
         uploadImage,
         addFavorite,
         deleteFavorite,
+        setTokens,
+        addToCart,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import Text from "../shared/Text";
@@ -9,21 +9,52 @@ import { useAuth } from "@/Contexts/UserContext";
 
 type BookProps = {
   book: IBook;
+  handleAddToTheTotal: (bookPrice: number) => void;
   className?: string;
 };
 
 const CartBook: React.FC<BookProps> = (props) => {
-  const { state,deleteFromCart } = useAuth();
+  const { state, deleteFromCart } = useAuth();
+  const [totalPrice, setTotalPrice] = useState(props.book.price);
   const [orderAmount, setOrderAmount] = useState(1);
 
-  const price = correctPrice(props.book.price);
+  const price = correctPrice(totalPrice);
+
+  function handleClickDecrease() {
+    const amount = orderAmount !== 1 ? orderAmount - 1 : orderAmount;
+    setOrderAmount(amount);
+    setTotalPrice(props.book.price * amount);
+
+    if (amount !== 1) {
+      props.handleAddToTheTotal(-props.book.price);
+    }
+  }
+
+  function handleClickIncrease() {
+    const amount = orderAmount !== 10 ? orderAmount + 1 : orderAmount;
+    setOrderAmount(amount);
+    setTotalPrice(props.book.price * amount);
+
+    if (amount !== 10) {
+      props.handleAddToTheTotal(props.book.price);
+    }
+  }
 
   async function handleDelete() {
-    //deleteFromCart(props.book._id!, props.accessToken!);
+    try {
+      deleteFromCart(
+        props.book._id!,
+        state.accessToken as string,
+        state.refreshToken as string
+      );
+      props.handleAddToTheTotal(-totalPrice);
+    } catch (err) {
+      throw(err);
+    }
   }
 
   return (
-    <StyledCartBook book={props.book} className={props.className}>
+    <StyledCartBook book={props.book} className={props.className} handleAddToTheTotal={props.handleAddToTheTotal}>
       <div className="book__container">
         <Image
           className="book__image"
@@ -56,14 +87,24 @@ const CartBook: React.FC<BookProps> = (props) => {
           </Text>
           <div className="book__buttons">
             <div className="book__order-amount">
-              <button className="book__order-amount--minus">-</button>
+              <button className="book__order-amount--minus" onClick={handleClickDecrease}>-</button>
               {orderAmount}
-              <button className="book__order-amount--plus">+</button>
+              <button className="book__order-amount--plus" onClick={handleClickIncrease}>+</button>
             </div>
-            <button className="book__delete-amount" onClick={handleDelete}></button>
+            <button
+              className="book__delete-amount"
+              onClick={handleDelete}
+            ></button>
           </div>
 
-          <Text className="book__price" color="dark" fontSize="smallBig" fontWeight="medium">{price}</Text>
+          <Text
+            className="book__price"
+            color="dark"
+            fontSize="smallBig"
+            fontWeight="medium"
+          >
+            {price}
+          </Text>
         </div>
       </div>
     </StyledCartBook>
@@ -153,6 +194,10 @@ const StyledCartBook = styled.li<BookProps>`
       background-image: url("/images/icons/Delete.svg");
       background-repeat: no-repeat;
       background-size: cover;
+
+      &:active {
+        transform: translateY(2px);
+      }
     }
   }
 `;

@@ -202,7 +202,39 @@ class UserService {
   }
 
   async deleteFromCart(id, bookID) {
-    await UserModel.updateOne({ _id: id}, { $pull: { cart: bookID } });
+    try {
+      console.log("bookID", bookID)
+      const result = await UserModel.updateOne({ _id: id }, { $pull: { cart: bookID } });
+  
+      if (result.nModified === 0) {
+        console.log(`No matching element found in the cart for user with id ${id}.`);
+      } else {
+        console.log(`Book with ID ${bookID} removed from the cart for user with id ${id}.`);
+      }
+    } catch (err) {
+      console.error('Error delete from cart:', err);
+    }
+  }
+
+  async addToCart(id, bookID) {
+    try {
+      const user = await UserModel.findOne({_id: id});
+      if (!user) {
+        throw ApiError.BadRequest("Пользователь с таким id не был найден");
+      }
+
+      if (user.cart.includes(bookID)) return;
+
+      const result = await UserModel.updateOne({ _id: id }, { $push: { cart: bookID } });
+  
+      if (result.nModified === 0) {
+        console.log(`No matching element found in the cart for user with id ${id}.`);
+      } else {
+        console.log(`Book with ID ${bookID} added to the cart for user with id ${id}.`);
+      }
+    } catch (err) {
+      console.error('Error add from cart:', err);
+    }
   }
 }
 

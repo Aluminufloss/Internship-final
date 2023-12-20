@@ -17,7 +17,7 @@ type BookProps = {
 };
 
 const Book: React.FC<BookProps> = (props) => {
-  const { state } = useAuth();
+  const { state, addToCart } = useAuth();
 
   const price = Number.isInteger(props.book.price)
     ? `$ ${props.book.price}.00 USD`
@@ -25,8 +25,21 @@ const Book: React.FC<BookProps> = (props) => {
 
   const rating = convertRating(props.book.rating);
 
+  function handleAddToCart() {
+    addToCart(
+      props.book._id!,
+      state.accessToken as string,
+      state.refreshToken as string
+    );
+  }
+
   return (
-    <StyledBook book={props.book} onClick={(ev) => props.onClick(props.book)} isAuth={props.isAuth}>
+    <StyledBook
+      book={props.book}
+      onClick={(ev) => props.onClick(props.book)}
+      isAuth={props.isAuth}
+      isAdded={props.isAdded}
+    >
       <div className="book__image--container">
         <Image
           className="book__image"
@@ -40,7 +53,11 @@ const Book: React.FC<BookProps> = (props) => {
           alt="Book cover"
           unoptimized={true}
         />
-        {state.isAuth && <button className="book__like-btn"></button> }
+        {state.isAuth && !props.isAdded ? (
+          <button className="book__like-btn"></button>
+        ) : (
+          <button className="book__like-btn book__like-btn--added"></button>
+        )}
       </div>
       <Text
         className="book__title"
@@ -65,6 +82,7 @@ const Book: React.FC<BookProps> = (props) => {
         width="100"
         height="34"
         fontSize="smallBig"
+        onClick={handleAddToCart}
         disabled={props.book.amount === 0 ? true : false}
       >
         {props.book.amount !== 0 ? price : "Not available"}
@@ -116,6 +134,16 @@ const StyledBook = styled.li<BookProps>`
 
       &:hover {
         transform: scale(1.05);
+      }
+
+      &--added {
+        width: 20px;
+        height: 20px;
+        padding: 2.5px;
+        background-image: url("/images/icons/Delete.svg");
+        background-color: ${props => props.theme.colors.white};
+        border-radius: 22px;
+        border: 1px solid ${props => props.theme.colors.black};
       }
     }
 
