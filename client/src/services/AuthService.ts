@@ -2,7 +2,7 @@ import $api from "../axios/index";
 import { AxiosResponse } from "axios";
 import { AuthRespone, UploadImageRespone } from "../models/response/Auth/AuthResponse";
 import { IUser } from "@/models/response/Auth/IUser";
-import { BookResponse } from "@/models/response/Book/BookResponse";
+import { BookResponse, SingleBookResponse } from "@/models/response/Book/BookResponse";
 
 export default class AuthService {
   static async login(
@@ -64,8 +64,8 @@ export default class AuthService {
     return $api.post("/favoriteDelete", { bookID, accessToken, refreshToken });
   }
 
-  static async createComment(bookID: string, text: string, accessToken: string): Promise<AxiosResponse<UploadImageRespone>> {
-    return $api.post("/commentCreate", { bookID, text, accessToken });
+  static async createComment(bookID: string, text: string, accessToken: string, refreshToken: string): Promise<AxiosResponse<UploadImageRespone>> {
+    return $api.post("/commentCreate", { bookID, text, accessToken, refreshToken });
   }
 
   static async getCart(accessToken: string, refreshToken: string): Promise<AxiosResponse<BookResponse>> {
@@ -76,7 +76,7 @@ export default class AuthService {
     return $api.post("/cartDelete", { bookID, accessToken, refreshToken });
   }
 
-  static async addToCart(bookID: string, accessToken: string, refreshToken: string): Promise<AxiosResponse<BookResponse>> {
+  static async addToCart(bookID: string, accessToken: string, refreshToken: string): Promise<AxiosResponse<SingleBookResponse>> {
     return $api.post("/cartAdd", { bookID, accessToken, refreshToken });
   }
 

@@ -7,7 +7,9 @@ import { IBook } from "@/models/response/Book/IBook";
 import Image from "next/image";
 import { DEFAULT_IMAGE } from "@/utils/constant/constant";
 import { convertRating } from "@/utils/helper/helper";
-import { useAuth } from "@/Contexts/UserContext";
+import { useAuth } from "@/Contexts/User/UserContext";
+import { useCart } from "@/Contexts/Cart/CartContext";
+import { Router, useRouter } from "next/router";
 
 type BookProps = {
   book: IBook;
@@ -17,7 +19,10 @@ type BookProps = {
 };
 
 const Book: React.FC<BookProps> = (props) => {
-  const { state, addToCart } = useAuth();
+  const router = useRouter();
+
+  const { userState } = useAuth();
+  const { addToCart } = useCart();
 
   const price = Number.isInteger(props.book.price)
     ? `$ ${props.book.price}.00 USD`
@@ -25,13 +30,25 @@ const Book: React.FC<BookProps> = (props) => {
 
   const rating = convertRating(props.book.rating);
 
-  function handleAddToCart() {
-    addToCart(
-      props.book._id!,
-      state.accessToken as string,
-      state.refreshToken as string
-    );
+  async function handleAddToCart(
+    ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
+    ev.stopPropagation();
+
+    try {
+      await addToCart(
+        props.book._id!,
+        userState.accessToken as string,
+        userState.refreshToken as string
+      );
+    } catch (err) {
+      throw err;
+    }
+
+    console.log("susdusdusdujds");
   }
+
+  function handleDelete() {}
 
   return (
     <StyledBook
@@ -53,13 +70,15 @@ const Book: React.FC<BookProps> = (props) => {
           alt="Book cover"
           unoptimized={true}
         />
-        {state.isAuth && (
-          !props.isAdded ? (
+        {props.isAuth &&
+          (!props.isAdded ? (
             <button className="book__like-btn"></button>
           ) : (
-            <button className="book__like-btn book__like-btn--added"></button>
-          ))
-        }
+            <button
+              className="book__like-btn book__like-btn--added"
+              onClick={handleDelete}
+            ></button>
+          ))}
       </div>
       <Text
         className="book__title"
@@ -84,7 +103,7 @@ const Book: React.FC<BookProps> = (props) => {
         width="100"
         height="34"
         fontSize="smallBig"
-        onClick={handleAddToCart}
+        onClick={(ev) => handleAddToCart(ev)}
         disabled={props.book.amount === 0 ? true : false}
       >
         {props.book.amount !== 0 ? price : "Not available"}
@@ -143,9 +162,9 @@ const StyledBook = styled.li<BookProps>`
         height: 20px;
         padding: 2.5px;
         background-image: url("/images/icons/Delete.svg");
-        background-color: ${props => props.theme.colors.white};
+        background-color: ${(props) => props.theme.colors.white};
         border-radius: 22px;
-        border: 1px solid ${props => props.theme.colors.black};
+        border: 1px solid ${(props) => props.theme.colors.black};
       }
     }
 

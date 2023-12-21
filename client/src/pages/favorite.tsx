@@ -11,13 +11,13 @@ import Layout from "@/components/layout/Layout";
 
 import AuthService from "@/services/AuthService";
 
-import { useAuth } from "@/Contexts/UserContext";
+import { useAuth } from "@/Contexts/User/UserContext";
+import { useFavorite } from "@/Contexts/Favorite/FavoriteContext";
 
 import { IBook } from "@/models/response/Book/IBook";
 import { IUser } from "@/models/response/Auth/IUser";
 
 import { checkTokens } from "@/utils/helper/helper";
-import { useBook } from "@/Contexts/BookContext";
 
 type Props = {
   books: IBook[];
@@ -30,14 +30,13 @@ type Props = {
 };
 
 const Cart: React.FC<Props> = (props) => {
-  const { state, setUser, setTokens } = useAuth();
-  const { stateBook, setBooks } = useBook();
+  const { userState, setUser, setTokens } = useAuth();
+  const { favoriteState, setFavorite } = useFavorite();
 
   useEffect(() => {
     (async () => {
       setUser(props.user, props.isAuth);
-      setBooks(props.books);
-      console.log("books", props.books);
+      setFavorite(props.books);
 
       if (typeof props.tokens !== "undefined") {
         setTokens(props.tokens.accessToken, props.tokens.refreshToken);
@@ -47,7 +46,7 @@ const Cart: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Header isAuth={state.isAuth} />
+      <Header isAuth={userState.isAuth} />
       {props.books.length === 0 ? (
         <EmptyCart
           title="Your list of favorite books is empty"
@@ -58,7 +57,7 @@ const Cart: React.FC<Props> = (props) => {
           className="favorite__book-list"
           books={props.books}
           isAdded={true}
-          isAuth={state.isAuth}
+          isAuth={userState.isAuth}
         />
       )}
       <Footer />

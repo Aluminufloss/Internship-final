@@ -5,7 +5,8 @@ import Text from "../shared/Text";
 import { IBook } from "@/models/response/Book/IBook";
 import { DEFAULT_IMAGE } from "@/utils/constant/constant";
 import { correctPrice } from "@/utils/helper/helper";
-import { useAuth } from "@/Contexts/UserContext";
+import { useAuth } from "@/Contexts/User/UserContext";
+import { useCart } from "@/Contexts/Cart/CartContext";
 
 type BookProps = {
   book: IBook;
@@ -14,7 +15,8 @@ type BookProps = {
 };
 
 const CartBook: React.FC<BookProps> = (props) => {
-  const { state, deleteFromCart } = useAuth();
+  const { userState } = useAuth();
+  const { deleteFromCart } = useCart();
   const [totalPrice, setTotalPrice] = useState(props.book.price);
   const [orderAmount, setOrderAmount] = useState(1);
 
@@ -44,8 +46,8 @@ const CartBook: React.FC<BookProps> = (props) => {
     try {
       deleteFromCart(
         props.book._id!,
-        state.accessToken as string,
-        state.refreshToken as string
+        userState.accessToken as string,
+        userState.refreshToken as string
       );
       props.handleAddToTheTotal(-totalPrice);
     } catch (err) {

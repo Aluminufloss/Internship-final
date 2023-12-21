@@ -1,36 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
+import styled from "styled-components";
+import { useRouter } from "next/router";
 
 import Footer from "@/components/widgets/Footer";
 import Header from "@/components/widgets/Header";
+import UserCart from "@/components/widgets/UserCart";
+
+import EmptyCart from "@/components/entities/EmptyCart";
+
+import Button from "@/components/shared/Button";
+import Text from "@/components/shared/Text";
 
 import Layout from "@/components/layout/Layout";
 
 import AuthService from "@/services/AuthService";
 
-import { useAuth } from "@/Contexts/UserContext";
-import EmptyCart from "@/components/entities/EmptyCart";
 import { IUser } from "@/models/response/Auth/IUser";
 import { IBook } from "@/models/response/Book/IBook";
-import UserCart from "@/components/widgets/UserCart";
+
+import { useAuth } from "@/Contexts/User/UserContext";
+import { useCart } from "@/Contexts/Cart/CartContext";
+
 import { checkTokens } from "@/utils/helper/helper";
-import Button from "@/components/shared/Button";
-import Text from "@/components/shared/Text";
-import styled from "styled-components";
-import { useRouter } from "next/router";
 
 type Props = {
   user: IUser;
   isAuth: boolean;
   cart: IBook[];
   tokens?: {
-    accessToken: string,
-    refreshToken: string,
+    accessToken: string;
+    refreshToken: string;
   };
 };
 
 const Cart: React.FC<Props> = (props) => {
-  const { state, setUser, setCart, setTokens } = useAuth();
+  const { userState, setUser, setTokens } = useAuth();
+  const { cartState, setCart } = useCart();
   const [totalPrice, setTotalPrice] = useState(0);
   const router = useRouter();
 
@@ -42,7 +48,7 @@ const Cart: React.FC<Props> = (props) => {
     (async () => {
       setUser(props.user, props.isAuth);
       setCart(props.cart);
-      if (typeof props.tokens !== 'undefined') {
+      if (typeof props.tokens !== "undefined") {
         setTokens(props.tokens.accessToken, props.tokens.refreshToken);
       }
     })();
@@ -50,46 +56,52 @@ const Cart: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Header isAuth={state.isAuth} />
-      {state.user.cart.length === 0 ? (
-        <EmptyCart
-          title="Your cart is empty"
-          text="Add items to cart to make a purchase.Go to the catalogue no."
-        />
-      ) : (
-        <StyledCart>
-          {state.user.cart && <UserCart cart={state.user.cart}/>}
-          <div className="price">
-            <Text className="price__text" color="dark">
-              Total:
-            </Text>
-            <Text className="price__amount" color="dark">
-              {totalPrice}
-            </Text>
-          </div>
+      <Header isAuth={userState.isAuth} />
+      {typeof cartState.cart !== 'undefined' && (
+        <>
+          {cartState.cart.length === 0 && (
+            <EmptyCart
+              title="Your cart is empty"
+              text="Add items to cart to make a purchase.Go to the catalogue no."
+            />
+          )}
+          {cartState.cart.length !== 0 && (
+            <StyledCart>
+              <UserCart cart={cartState.cart} />
+              <div className="price">
+                <Text className="price__text" color="dark">
+                  Total:
+                </Text>
+                <Text className="price__amount" color="dark">
+                  {totalPrice}
+                </Text>
+              </div>
 
-          <div className="buttons__group">
-            <Button
-              className="buttons__group--catalog"
-              type="secondary"
-              width="268"
-              height="35"
-              onClick={handleRedirectToCatalog}
-            >
-              Continue shopping
-            </Button>
-            <Button
-              className="buttons__group--checkout"
-              type="primary"
-              width="174"
-              height="35"
-              onClick={handleRedirectToCatalog}
-            >
-              Checkout
-            </Button>
-          </div>
-        </StyledCart>
+              <div className="buttons__group">
+                <Button
+                  className="buttons__group--catalog"
+                  type="secondary"
+                  width="268"
+                  height="35"
+                  onClick={handleRedirectToCatalog}
+                >
+                  Continue shopping
+                </Button>
+                <Button
+                  className="buttons__group--checkout"
+                  type="primary"
+                  width="174"
+                  height="35"
+                  onClick={handleRedirectToCatalog}
+                >
+                  Checkout
+                </Button>
+              </div>
+            </StyledCart>
+          )}
+        </>
       )}
+
       <Footer />
     </Layout>
   );
@@ -156,16 +168,25 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         aToken: accessToken,
         rToken: refreshToken,
       } = checkTokens(response, ctx);
-      ctx = context;
 
       return {
-        props: { user, isAuth: true, cart, tokens: { accessToken, refreshToken } },
+        props: {
+          user,
+          isAuth: true,
+          cart,
+          tokens: { accessToken, refreshToken },
+        },
       };
     } catch (err) {
       console.log(err);
 
       return {
-        props: { user, isAuth: true, cart: [], tokens: { accessToken, refreshToken } },
+        props: {
+          user,
+          isAuth: true,
+          cart: [],
+          tokens: { accessToken, refreshToken },
+        },
       };
     }
   } catch (err) {

@@ -4,13 +4,15 @@ import { Formik } from "formik";
 
 import Button from "../shared/Button";
 import AuthService from "@/services/AuthService";
+import { useAuth } from "@/Contexts/User/UserContext";
 
 type CreateCommentProps = {
   bookID: string;
-  accessToken: string;
 };
 
 const CreateComment: React.FC<CreateCommentProps> = (props) => {
+  const { userState } = useAuth();
+
   return (
     <Formik
       initialValues={{ text: "" }}
@@ -19,15 +21,16 @@ const CreateComment: React.FC<CreateCommentProps> = (props) => {
           return;
         }
 
-        await AuthService.createComment(props.bookID, values.text, props.accessToken);
+        await AuthService.createComment(
+          props.bookID,
+          values.text,
+          userState.accessToken!,
+          userState.refreshToken!
+        );
       }}
     >
       {(formik) => (
-        <StyledForm
-          onSubmit={formik.handleSubmit}
-          bookID={props.bookID}
-          accessToken={props.accessToken}
-        >
+        <StyledForm onSubmit={formik.handleSubmit} bookID={props.bookID}>
           <StyledCreateComment
             name="text"
             placeholder="Share a comment"

@@ -14,7 +14,7 @@ import Layout from "@/components/layout/Layout";
 import Header from "@/components/widgets/Header";
 import Footer from "@/components/widgets/Footer";
 
-import { useAuth } from "@/Contexts/UserContext";
+import useAuth from "@/Contexts/User/UserContext";
 import BookInformation from "@/components/widgets/BookInformation";
 import BannerBottom from "@/components/entities/BannerBottom";
 import CreateComment from "@/components/features/CreateComment";
@@ -25,7 +25,10 @@ type BookDetailsProps = {
   book: IBook;
   user: IUser;
   isAuth: boolean;
-  accessToken: string;
+  tokens?: {
+    accessToken: string,
+    refreshToken: string,
+  }
   comments: IComment[];
 };
 
@@ -34,11 +37,14 @@ interface IParams extends ParsedUrlQuery {
 }
 
 const BookDetails: React.FC<BookDetailsProps> = (props) => {
-  const { state, setUser } = useAuth();
+  const { userState, setUser, setTokens } = useAuth();
 
   useEffect(() => {
     (async () => {
       setUser(props.user, props.isAuth);
+      if (typeof props.tokens !== 'undefined') {
+        setTokens(props.tokens.accessToken, props.tokens.refreshToken);
+      }
     })();
   }, []);
 
@@ -58,7 +64,6 @@ const BookDetails: React.FC<BookDetailsProps> = (props) => {
             <Comments comments={props.comments}/>
             <CreateComment
               bookID={props.book._id as string}
-              accessToken={props.accessToken}
             />
           </>
         )}
@@ -92,7 +97,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       const commentsResponse = await BookService.getComments(book._id as string, aToken);
       const comments = commentsResponse.data;
       const { context, aToken: accessToken, rToken: refreshToken } = checkTokens(commentsResponse, ctx);
-      ctx = context;
 
       /**
        * If we have user and book
@@ -102,8 +106,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user,
           isAuth: true,
           book,
-          accessToken: accessToken,
-          comments: comments,
+          tokens: {
+            accessToken,
+            refreshToken,
+          },
+          comments,
         },
       };
     } catch (err) {
@@ -115,7 +122,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user,
           isAuth: true,
           book: {},
-          accessToken: accessToken,
+          tokens: {
+            accessToken,
+            refreshToken,
+          },
           comments: [],
         },
       };
@@ -133,7 +143,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user: {},
           isAuth: false,
           book,
-          accessToken: "",
+          tokens: {
+            accessToken: "",
+            refreshToken: "",
+          },
           comments: [],
         },
       };
@@ -146,7 +159,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user: {},
           isAuth: false,
           books: {},
-          accessToken: "",
+          tokens: {
+            accessToken: "",
+            refreshToken: "",
+          },
           comments: [],
         },
       };

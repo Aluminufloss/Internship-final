@@ -9,9 +9,7 @@ import Button from "../shared/Button";
 
 import { IUser } from "@/models/response/Auth/IUser";
 
-import { UserValidationSchema } from "@/schema/validation";
-
-import { useAuth } from "@/Contexts/UserContext";
+import { useAuth } from "@/Contexts/User/UserContext";
 
 type FormProps = {
   user: IUser;
@@ -19,11 +17,13 @@ type FormProps = {
 };
 
 const UserForm: React.FC<FormProps> = (props) => {
-  const { changeInformation, state } = useAuth();
+  const { changeInformation, userState } = useAuth();
   
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [disabled, setDisabled] = useState(true);
-  const [disabledButton, setDisabledButton] = useState(true);
+
+  const [initialUsername, setInitialUsername] = useState(props.user.username);
+  const [initialEmail, setInitialEmail] = useState(props.user.email);
 
   const [isValidated, setIsValidated] = useState(false);
 
@@ -47,24 +47,27 @@ const UserForm: React.FC<FormProps> = (props) => {
         username: "",
         email: "",
         password: "",
-        passwordConfirm: "",
       }}
-      validationSchema={UserValidationSchema}
+      // validationSchema={RegistrationValidationSchema}
       onSubmit={async (values, { setSubmitting }) => {
         try {
           setSubmitting(true);
 
           if (
-            values.username === "" &&
-            values.email === "" &&
+            values.username === initialUsername &&
+            values.email === initialEmail &&
             values.password === ""
           ) {
+            console.log("sukaddd")
             return;
           }
 
-          await changeInformation(state.user, values.username, values.email, values.password);
+          await changeInformation(userState.user, values.username, values.email, values.password);
 
           console.log("Yes");
+
+          // const im = encodeImageFileAsURL(props.avatar!);
+          // console.log("Yep", im)
 
           setSubmitting(false);
         } catch (err) {
@@ -73,12 +76,8 @@ const UserForm: React.FC<FormProps> = (props) => {
       }}
     >
       {(formik) => (
-        <StyledUserForm onSubmit={formik.handleSubmit}>
-          <Text 
-            fontSize="medium" 
-            fontWeight="medium" 
-            className="text"
-          >
+        <StyledUserForm>
+          <Text fontSize="medium" fontWeight="medium" className="text">
             Personal Information
           </Text>
           <button className="btn__change-info" onClick={handleChangeInfoClick}>
@@ -95,7 +94,7 @@ const UserForm: React.FC<FormProps> = (props) => {
             id="username"
             className="input__username"
             disabled={disabled}
-            placeholder={state.user.username}
+            placeholder={initialUsername}
             color="dark"
             value={formik.values.username}
             onChange={formik.handleChange}
@@ -107,7 +106,7 @@ const UserForm: React.FC<FormProps> = (props) => {
           <Input
             size="small"
             inputType="email"
-            placeholder={state.user.email}
+            placeholder={initialEmail}
             id="email"
             className="input__email"
             iconName="Mail"
@@ -116,8 +115,6 @@ const UserForm: React.FC<FormProps> = (props) => {
             onChange={formik.handleChange}
             disabled={disabled}
           />
-
-          
 
           <div className="container">
             <Text
@@ -145,7 +142,6 @@ const UserForm: React.FC<FormProps> = (props) => {
                 inputType="password"
                 placeholder="New password"
                 id="new-password"
-                name="password"
                 color="dark"
                 className="input__password"
                 onChange={formik.handleChange}
@@ -160,8 +156,7 @@ const UserForm: React.FC<FormProps> = (props) => {
                 inputType="password"
                 placeholder="Password replay"
                 color="dark"
-                name="passwordConfirm"
-                id="passwordConfirm"
+                id="new-password-reply"
                 className="input__password"
                 onChange={formik.handleChange}
                 iconName="Hide"
@@ -169,7 +164,8 @@ const UserForm: React.FC<FormProps> = (props) => {
               <Text
                 fontSize="medium"
                 fontWeight="medium"
-                className="text text__repeat-pas"
+                className="text"
+                style={{ marginBottom: "40px" }}
               >
                 Repeat your password without errors
               </Text>
@@ -223,10 +219,6 @@ const StyledUserForm = styled.form`
 
   .text {
     margin-top: 10px;
-
-    &__repeat-pas {
-      margin-bottom: 40px;
-    }
   }
 
   input::placeholder {

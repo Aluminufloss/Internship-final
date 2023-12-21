@@ -46,7 +46,7 @@ class BookService {
   }
 
   async getBookById(_id) {
-    const book = await BookModel.find({ _id });
+    const book = await BookModel.findOne({ _id });
 
     if (!book) {
       throw ApiError.BadRequest("Книга по такому id не найдена");

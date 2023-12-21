@@ -164,8 +164,8 @@ class UserContoller {
 
   async addToCart(req, res, next) {
     try {
-      await userService.addToCart(req.user.id, req.body.bookID);
-      return res.json("Success");
+      const book = await userService.addToCart(req.user.id, req.body.bookID);
+      return res.json(book);
     } catch (err) {
       next(err);
     }

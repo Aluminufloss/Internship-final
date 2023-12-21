@@ -11,22 +11,25 @@ import UserForm from "@/components/features/UserForm";
 
 import Avatar from "@/components/entities/Avatar";
 
-import { useAuth } from "@/Contexts/UserContext";
+import { useAuth } from "@/Contexts/User/UserContext";
 import AuthService from "@/services/AuthService";
 import { IUser } from "@/models/response/Auth/IUser";
 import { DEFAULT_IMAGE } from "@/utils/constant/constant";
-import { encodeImageToBase64String } from "@/utils/helper/helper";
+import { checkTokens, encodeImageToBase64String } from "@/utils/helper/helper";
 
 // import { getServerSideProps } from "@/utils/helper/helper";
 
 type Props = {
   user: IUser;
   isAuth: boolean;
+  tokens?: { 
+    aToken: string, 
+    rToken: string, 
+  }
 };
 
 const User: React.FC<Props> = (props) => {
-  const { state, setUser, uploadImage } = useAuth();
-  console.log("Suka", state.user);
+  const { userState, setUser, uploadImage } = useAuth();
 
   useEffect(() => {
     (async () => {
@@ -38,19 +41,19 @@ const User: React.FC<Props> = (props) => {
     if (!e.target.files) return;
     const image = e.target.files![0];
     const base64Image = await encodeImageToBase64String(image);
-    uploadImage(state.user.id!, base64Image);
+    uploadImage(userState.user.id!, base64Image);
   }
 
   return (
     <Layout>
-      <Header isAuth={state.isAuth} />
-      {state.user ? (
+      <Header isAuth={props.isAuth} />
+      {userState.user ? (
         <>
           <Avatar
             uploadPhoto={handleUploadPhoto}
             avatar={props.user.imagePath!}
           />
-          <UserForm user={state.user} />
+          <UserForm user={userState.user} />
         </>
       ) : (
         "Loading..."
@@ -69,25 +72,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       accessToken as string
     );
 
-    const { user, refreshToken: rToken, accessToken: aToken } = response.data;
-
-    if (typeof rToken !== 'undefined') {
-      console.log("We're here");
-      ctx.res.setHeader("Set-Cookie", [
-        `refreshToken=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/;`,
-        cookie.serialize("accessToken", aToken, {
-          httpOnly: true,
-          maxAge: 1 * 1 * 15 * 60 * 1000,
-        }),
-        cookie.serialize("refreshToken", rToken, {
-          httpOnly: true,
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        }),
-      ]);
-    }
+    const { user } = response.data;
+    const { rToken, aToken } = checkTokens(response, ctx);
 
     return {
-      props: { user, isAuth: true },
+      props: { user, isAuth: true, tokens: { aToken, rToken } },
     };
   } catch (err) {
     console.log(err);

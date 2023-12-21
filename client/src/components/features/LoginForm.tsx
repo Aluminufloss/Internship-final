@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Formik } from "formik";
 import { useRouter } from 'next/router';
 
-import { useAuth } from "@/Contexts/UserContext";
+import { useAuth } from "@/Contexts/User/UserContext";
 
 import Text from "../shared/Text";
 import Input from "../shared/Input";

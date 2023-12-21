@@ -226,12 +226,15 @@ class UserService {
       if (user.cart.includes(bookID)) return;
 
       const result = await UserModel.updateOne({ _id: id }, { $push: { cart: bookID } });
+      const book = await BookModel.findOne({ _id: bookID });
   
       if (result.nModified === 0) {
         console.log(`No matching element found in the cart for user with id ${id}.`);
       } else {
         console.log(`Book with ID ${bookID} added to the cart for user with id ${id}.`);
       }
+
+      return book;
     } catch (err) {
       console.error('Error add from cart:', err);
     }

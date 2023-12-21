@@ -13,7 +13,7 @@ import Filtres from "@/components/features/Filtres";
 import BannerTop from "@/components/entities/BannerTop";
 import BannerBottom from "@/components/entities/BannerBottom";
 
-import { useAuth } from "@/Contexts/UserContext";
+import { useAuth } from "@/Contexts/User/UserContext";
 
 import AuthService from "@/services/AuthService";
 import BookService from "@/services/BookService";
@@ -21,30 +21,30 @@ import BookService from "@/services/BookService";
 import { IUser } from "@/models/response/Auth/IUser";
 import { IBook } from "@/models/response/Book/IBook";
 
-import { useBook } from "@/Contexts/BookContext";
 import { checkTokens } from "@/utils/helper/helper";
 import Pagination from "@/components/entities/Pagination";
+import { useCatalog } from "@/Contexts/Catalog/CatalogContext";
 
 type Props = {
   user: IUser;
   isAuth: boolean;
   books: IBook[];
   tokens?: {
-    accessToken: string,
-    refreshToken: string,
+    accessToken: string;
+    refreshToken: string;
   };
 };
 
 const Home: React.FC<Props> = (props) => {
   const { setUser, setTokens } = useAuth();
-  const { setBooks } = useBook();
+  const { catalogState, setCatalog } = useCatalog();
 
   useEffect(() => {
     (async () => {
       setUser(props.user, props.isAuth);
-      setBooks(props.books);
+      setCatalog(props.books);
 
-      if (typeof props.tokens !== 'undefined') {
+      if (typeof props.tokens !== "undefined") {
         setTokens(props.tokens.accessToken, props.tokens.refreshToken);
       }
     })();
@@ -62,11 +62,9 @@ const Home: React.FC<Props> = (props) => {
 
         <Filtres />
 
-        <BookList 
-          books={props.books} 
-          isAuth={props.isAuth} 
-          isAdded={false}
-        />
+        {typeof catalogState !== "undefined" ? (
+          <BookList books={props.books} isAuth={props.isAuth} isAdded={false} />
+        ): "Loading"}
 
         <Pagination />
 
@@ -102,21 +100,31 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       const books = responseBooks.data;
 
       /**
-     * If we have user and books
-     */
+       * If we have user and books
+       */
       return {
-        props: { user, isAuth: true, books, tokens: { accessToken: aToken, refreshToken: rToken } },
+        props: {
+          user,
+          isAuth: true,
+          books,
+          tokens: { accessToken: aToken, refreshToken: rToken },
+        },
       };
     } catch (err) {
       /**
-     * If we have user but not books
-     */
+       * If we have user but not books
+       */
       return {
-        props: { user, isAuth: true, books: {}, tokens: { accessToken: aToken, refreshToken: rToken } },
+        props: {
+          user,
+          isAuth: true,
+          books: {},
+          tokens: { accessToken: aToken, refreshToken: rToken },
+        },
       };
     }
   } catch (err) {
-      /**
+    /**
      * If we don't have user but we will try to get books
      */
     try {
@@ -127,19 +135,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user: {},
           isAuth: false,
           books,
-          tokens: { aToken: "", rToken: "" }
+          tokens: { aToken: "", rToken: "" },
         },
       };
     } catch (err) {
       /**
-     * If we don't have user and books 
-     */
+       * If we don't have user and books
+       */
       return {
         props: {
           user: {},
           isAuth: false,
           books: {},
-          tokens: { aToken: "", rToken: "" }
+          tokens: { aToken: "", rToken: "" },
         },
       };
     }
