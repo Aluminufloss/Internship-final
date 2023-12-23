@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Book from "../entities/Book";
 
 import { IBook } from "@/models/response/Book/IBook";
+import { useCatalog } from "@/Contexts/Catalog/CatalogContext";
 
 type BookListProps = {
   books: IBook[];
@@ -15,6 +16,8 @@ type BookListProps = {
 
 const BookList: React.FC<BookListProps> = (props) => {
   const router = useRouter();
+  const { catalogState } = useCatalog();
+  const catalog = catalogState ? catalogState.catalog.filter()
 
   function handleClick(book: IBook) {
     router.push(`/catalog/${book._id}`);
