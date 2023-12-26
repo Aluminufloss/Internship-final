@@ -47,3 +47,13 @@ export const UserValidationSchema = Yup.object().shape({
     "Passwords must match"
   ),
 });
+
+
+class AuthError extends Error {};
+class RequestError extends Error{}
+
+const err = new AuthError()
+
+if (err instanceof RequestError) {
+
+}

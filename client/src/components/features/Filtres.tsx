@@ -2,6 +2,9 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 import Text from "../shared/Text";
+import GenreFilter from "../entities/GenreFilter";
+import MoneyFilter from "../entities/MoneyFilter";
+import CustomFilter from "../entities/CustomFilter";
 
 type FilterProps = {};
 
@@ -30,47 +33,9 @@ const Filtres: React.FC<FilterProps> = (props) => {
       >
         Catalog
       </Text>
-        <div className="filter__select--container">
-          <select className="filter__select--genre">
-            <option value="Genre">
-              Genre
-            </option>
-            <option value="Fiction">Fiction</option>
-            <option value="Non—fiction">Non—fiction</option>
-            <option value="Light fiction">Light fiction</option>
-            <option value="Science-fiction">Science-fiction</option>
-            <option value="Fantasy">Fantasy</option>
-            <option value="Business & Finance">Business & Finance</option>
-            <option value="Politics">Politics</option>
-            <option value="Travel books">Travel books</option>
-            <option value="Autobiography">Autobiography</option>
-            <option value="History">History</option>
-            <option value="Thriller / Mystery">Thriller / Mystery</option>
-            <option value="Romance">Romance</option>
-            <option value="Satire">Satire</option>
-            <option value="Horror">Horror</option>
-            <option value="FicHealth / Medicinetion">Health / Medicine</option>
-            <option value="Children’s books">Children’s books</option>
-            <option value=">Encyclopedia">Encyclopedia</option>
-          </select>
-          <span className="filter__select--icon"></span>
-        </div>
-        <div className="filter__select--container">
-          <select className="filter__select--price">
-            <option value="Satire">Satire</option>
-          </select>
-          <span className="filter__select--icon"></span>
-        </div>
-        <div className="filter__select--container">
-          <select className="filter__select--custom">
-            <option value="Price">Price</option>
-            <option value="Name">Name</option>
-            <option value="Author name">Author name</option>
-            <option value="Rating">Rating</option>
-            <option value="Date of issue">Date of issue</option>
-          </select>
-          <span className="filter__select--icon"></span>
-        </div>
+      <GenreFilter />
+      {/* <MoneyFilter /> */}
+      <CustomFilter />
       </StyledFilters>
     </>
   );

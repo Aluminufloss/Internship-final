@@ -6,13 +6,13 @@ import { ParsedUrlQuery } from "querystring";
 import cookie from "cookie";
 import { CommentResponse } from "@/models/response/Comment/CommentResponse";
 import { BookResponse } from "@/models/response/Book/BookResponse";
+import { useCatalog } from "@/Contexts/Catalog/CatalogContext";
 
 type CheckTokensResult = {
   context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>;
   aToken: string;
   rToken: string;
 };
-
 
 export function getMediaQuery(minWidth: number): string {
   return `@media (min-width: ${minWidth}px)`;
@@ -89,8 +89,10 @@ export function countRating(rating: string): string[] {
 
 export function correctPrice(price: number): string {
   const priceCorrect = Number.isInteger(price)
-  ? `$ ${price}.00 USD`
-  : price.toString().length === 3 ? `$ ${price}0 USD` : `$ ${price} USD`;
+    ? `$ ${price}.00 USD`
+    : price.toString().length === 3
+    ? `$ ${price}0 USD`
+    : `$ ${price} USD`;
 
   return priceCorrect;
 }

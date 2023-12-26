@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
 
@@ -24,6 +24,7 @@ import { IBook } from "@/models/response/Book/IBook";
 import { checkTokens } from "@/utils/helper/helper";
 import Pagination from "@/components/entities/Pagination";
 import { useCatalog } from "@/Contexts/Catalog/CatalogContext";
+import { useRouter } from "next/router";
 
 type Props = {
   user: IUser;
@@ -38,6 +39,8 @@ type Props = {
 const Home: React.FC<Props> = (props) => {
   const { setUser, setTokens } = useAuth();
   const { catalogState, setCatalog } = useCatalog();
+  const [searchValue, setSearchValue] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -50,21 +53,36 @@ const Home: React.FC<Props> = (props) => {
     })();
   }, []);
 
+  function handleSearch(value: string) {
+    setSearchValue(value);
+  }
+
   return (
     <>
       <Layout>
-        <Header isAuth={props.isAuth} />
+        <Header isAuth={props.isAuth} handleSearch={handleSearch} />
         <BannerTop
           bannerTitle="Build your library with us"
           bannerSubtitle="Buy two books and get one for free"
           buttonText="Choose a book"
         />
 
-        <Filtres />
+        {typeof catalogState.catalog !== "undefined" ? (
+          <Filtres />
+        ) : (
+          "Loading"
+        )}
 
-        {typeof catalogState !== "undefined" ? (
-          <BookList books={props.books} isAuth={props.isAuth} isAdded={false} />
-        ): "Loading"}
+        {typeof catalogState.catalog !== "undefined" ? (
+          <BookList
+            books={props.books}
+            isAuth={props.isAuth}
+            isAdded={false}
+            searchValue={searchValue}
+          />
+        ) : (
+          "Loading"
+        )}
 
         <Pagination />
 
@@ -80,6 +98,7 @@ const Home: React.FC<Props> = (props) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  console.log(ctx.query);
   try {
     const { refreshToken, accessToken } = ctx.req.cookies;
 
@@ -89,8 +108,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     );
 
     const { user } = response.data;
-    const { context, aToken, rToken } = checkTokens(response, ctx);
-    ctx = context;
+    const { aToken, rToken } = checkTokens(response, ctx);
 
     /**
      * If we have user, we will try to get books

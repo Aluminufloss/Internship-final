@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import styled from "styled-components";
 
@@ -6,13 +7,14 @@ type PaginationProps = {
 };
 
 const Pagination: React.FC<PaginationProps> = (props) => {
+ 
   return (
     <StyledPagination>
       <span className="pagination__arrow pagination__arrow--left"></span>
       <div className="pagination__circle--container">
-        <span className="pagination__circle pagination__circle--active"></span> 
-        <span className="pagination__circle"></span>      
-        <span className="pagination__circle"></span>
+        <Link href={`/catalog?page=1`} className="pagination__circle pagination__circle--active"></Link> 
+        <Link href={`/catalog?page=2`} className="pagination__circle" shallow scroll={false}></Link>      
+        <Link href={`/catalog?page=3`} className="pagination__circle" shallow></Link>
       </div> 
       <span className="pagination__arrow pagination__arrow--right"></span>            
     </StyledPagination>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 
@@ -6,26 +6,35 @@ import Book from "../entities/Book";
 
 import { IBook } from "@/models/response/Book/IBook";
 import { useCatalog } from "@/Contexts/Catalog/CatalogContext";
+import EmptyFilter from "../entities/EmptyFilter";
 
 type BookListProps = {
   books: IBook[];
   isAuth: boolean;
   className?: string;
   isAdded?: boolean;
+  searchValue?: string;
 };
 
 const BookList: React.FC<BookListProps> = (props) => {
   const router = useRouter();
-  const { catalogState } = useCatalog();
-  const catalog = catalogState ? catalogState.catalog.filter()
+  const { catalogState, setCatalog, setSearchFilter } = useCatalog();
 
   function handleClick(book: IBook) {
     router.push(`/catalog/${book._id}`);
   }
 
-  return (
+  useEffect(() => {
+    if (props.searchValue) {
+      setSearchFilter(props.searchValue);
+    } else {
+      setSearchFilter("");
+    }
+  }, [props.searchValue]);
+
+  return catalogState.searchCatalog.length !== 0 ? (
     <StyledBookList className={props.className}>
-      {props.books.map((book) => (
+      {catalogState.searchCatalog.map((book) => (
         <Book
           book={book}
           isAdded={props.isAdded}
@@ -34,7 +43,12 @@ const BookList: React.FC<BookListProps> = (props) => {
           isAuth={props.isAuth}
         />
       ))}
-    </StyledBookList> 
+    </StyledBookList>
+  ) : (
+    <EmptyFilter
+      title="Мы не смогли найти книгу по данному запросу"
+      text="Уточинте свой запрос"
+    />
   );
 };
 

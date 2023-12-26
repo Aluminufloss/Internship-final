@@ -34,6 +34,15 @@ type Props = {
   };
 };
 
+enum AppPages {
+  catalogPage = "/catalog",
+  catalogInfo = "/catalog/[slug]",
+}
+
+const getCatalogInfoURL = (options: { id: string }) => {
+  return AppPages.catalogInfo.replace("[slug]", options.id);
+};
+
 const Cart: React.FC<Props> = (props) => {
   const { userState, setUser, setTokens } = useAuth();
   const { cartState, setCart } = useCart();
@@ -57,7 +66,7 @@ const Cart: React.FC<Props> = (props) => {
   return (
     <Layout>
       <Header isAuth={userState.isAuth} />
-      {typeof cartState.cart !== 'undefined' && (
+      {typeof cartState.cart !== "undefined" && (
         <>
           {cartState.cart.length === 0 && (
             <EmptyCart
@@ -101,7 +110,6 @@ const Cart: React.FC<Props> = (props) => {
           )}
         </>
       )}
-
       <Footer />
     </Layout>
   );

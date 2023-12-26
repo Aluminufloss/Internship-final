@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 
 type HeaderProps = {
   isAuth?: boolean;
+  handleSearch?: (value: string) => void
 };
 
 const Header: React.FC<HeaderProps> = (props) => {
@@ -31,23 +32,41 @@ const Header: React.FC<HeaderProps> = (props) => {
       <Text fontSize="smallBig" className="text">
         Catalog
       </Text>
-      {!props.isAuth ? <Button
-        width="135"
-        height="38"
-        type="primary"
-        className="button"
-        fontSize="small"
-        onClick={ev => handleClick(ev)}
-      >
-        Log In/Sign Up
-      </Button> : 
+      {!props.isAuth ? (
+        <Button
+          width="135"
+          height="38"
+          type="primary"
+          className="button"
+          fontSize="small"
+          onClick={(ev) => handleClick(ev)}
+        >
+          Log In/Sign Up
+        </Button>
+      ) : (
         <div className="btn-group">
-          <ButtonLink className="btn-group__button" href="/cart" iconname="button_cart"/>
-          <ButtonLink className="btn-group__button" href="/favorite" iconname="button_save"/>
-          <ButtonLink className="btn-group__button" href="/user" iconname="button_user"/>
+          <ButtonLink
+            className="btn-group__button"
+            href="/cart"
+            iconname="button_cart"
+          />
+          <ButtonLink
+            className="btn-group__button"
+            href="/favorite"
+            iconname="button_save"
+          />
+          <ButtonLink
+            className="btn-group__button"
+            href="/user"
+            iconname="button_user"
+          />
         </div>
-      }
-      <Search type="medium" className="search" />
+      )}
+      <Search
+        type="medium"
+        className="search"
+        handleSearch={props.handleSearch}
+      />
     </StyledHeader>
   );
 };
@@ -66,7 +85,8 @@ const StyledHeader = styled.header`
     grid-column: span 3;
   }
 
-  .button, .btn-group {
+  .button,
+  .btn-group {
     justify-self: end;
   }
 
@@ -79,6 +99,5 @@ const StyledHeader = styled.header`
     justify-content: center;
     align-items: center;
   }
-
 `;
 export default Header;
