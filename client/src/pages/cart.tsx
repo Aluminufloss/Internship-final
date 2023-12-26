@@ -20,7 +20,6 @@ import { IUser } from "@/models/response/Auth/IUser";
 import { IBook } from "@/models/response/Book/IBook";
 
 import { useAuth } from "@/Contexts/User/UserContext";
-import { useCart } from "@/Contexts/Cart/CartContext";
 
 import { checkTokens } from "@/utils/helper/helper";
 
@@ -34,18 +33,17 @@ type Props = {
   };
 };
 
-enum AppPages {
-  catalogPage = "/catalog",
-  catalogInfo = "/catalog/[slug]",
-}
+// enum AppPages {
+//   catalogPage = "/catalog",
+//   catalogInfo = "/catalog/[slug]",
+// }
 
-const getCatalogInfoURL = (options: { id: string }) => {
-  return AppPages.catalogInfo.replace("[slug]", options.id);
-};
+// const getCatalogInfoURL = (options: { id: string }) => {
+//   return AppPages.catalogInfo.replace("[slug]", options.id);
+// };
 
 const Cart: React.FC<Props> = (props) => {
   const { userState, setUser, setTokens } = useAuth();
-  const { cartState, setCart } = useCart();
   const [totalPrice, setTotalPrice] = useState(0);
   const router = useRouter();
 
@@ -53,30 +51,19 @@ const Cart: React.FC<Props> = (props) => {
     router.push("/catalog");
   }
 
-  useEffect(() => {
-    (async () => {
-      setUser(props.user, props.isAuth);
-      setCart(props.cart);
-      if (typeof props.tokens !== "undefined") {
-        setTokens(props.tokens.accessToken, props.tokens.refreshToken);
-      }
-    })();
-  }, []);
-
   return (
     <Layout>
       <Header isAuth={userState.isAuth} />
-      {typeof cartState.cart !== "undefined" && (
         <>
-          {cartState.cart.length === 0 && (
+          {props.cart.length === 0 && (
             <EmptyCart
               title="Your cart is empty"
               text="Add items to cart to make a purchase.Go to the catalogue no."
             />
           )}
-          {cartState.cart.length !== 0 && (
+          {props.cart.length !== 0 && (
             <StyledCart>
-              <UserCart cart={cartState.cart} />
+              <UserCart cart={props.cart} />
               <div className="price">
                 <Text className="price__text" color="dark">
                   Total:
@@ -109,7 +96,6 @@ const Cart: React.FC<Props> = (props) => {
             </StyledCart>
           )}
         </>
-      )}
       <Footer />
     </Layout>
   );

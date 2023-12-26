@@ -1,4 +1,3 @@
-import { useCatalog } from "@/Contexts/Catalog/CatalogContext";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import styled from "styled-components";
@@ -12,19 +11,10 @@ type QueryProps = {
 }
 
 const GenreFilter: React.FC<GenreFilterProps> = (props) => {
-  const { catalogState, sortByGenre } = useCatalog();
   const router = useRouter();
 
-  useEffect(() => {
-    const { genre } = router.query as QueryProps;
-
-    if (typeof genre !== "undefined" && typeof catalogState.catalog !== "undefined") {
-      handleSelectGenre(genre);
-    }
-  }, []);
-
   function handleSelectGenre(value: string) {
-    const currentQuery = { ...router.query };
+    const currentQuery = { ...router.query } as QueryProps;
 
     if (value !== "Genre") {
       currentQuery.genre = value;
@@ -32,15 +22,15 @@ const GenreFilter: React.FC<GenreFilterProps> = (props) => {
       delete currentQuery['genre'];
     }
 
-    sortByGenre(value);
-
     router.push(
       {
         pathname: router.pathname,
         query: currentQuery,
       },
       undefined,
-      { shallow: true }
+      { shallow: false,
+        scroll: false,
+      }
     );
   }
 

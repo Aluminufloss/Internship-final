@@ -35,11 +35,44 @@ class BookService {
     return book.save();
   }
 
-  async getBooks() {
-    const books = await BookModel.find({ });
-    
-    if (!books) {
-      throw ApiError.BadRequest("Книги не найдены");
+  async getBooks(filter, genre) {
+    let books = [];
+
+    if (genre) {
+      books = await BookModel.find({ genre: genre });
+    } else {
+      books = await BookModel.find({ });
+    }
+
+    if (filter) {
+      switch (filter) {
+        case "Name":
+          books = books.sort((a, b) => a.title.localeCompare(b.title));
+          break;
+
+        case "Author name":
+          books = books.sort((a, b) => a.author.localeCompare(b.author));
+          console.log("2");
+          break;
+
+        case "Price":
+          books = books.sort((a, b) => a.price > b.price ? -1 : 1);
+          console.log("3");
+          break;
+
+        case "Rating":
+          books = books.sort((a, b) => a.rating > b.rating ? -1 : 1);
+          console.log("4");
+          break;
+
+        case "Date":
+          books = books.sort((a, b) => a.rating > b.rating ? -1 : 1);
+          console.log("5");
+          break;
+
+        default:
+          break;
+      }
     }
 
     return books;

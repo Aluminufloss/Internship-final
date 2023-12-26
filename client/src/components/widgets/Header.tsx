@@ -6,6 +6,7 @@ import Button from "../shared/Button";
 import Search from "../shared/Search";
 import ButtonLink from "../shared/ButtonLink";
 import { useRouter } from "next/router";
+import { useAuth } from "@/Contexts/User/UserContext";
 
 type HeaderProps = {
   isAuth?: boolean;

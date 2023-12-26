@@ -1,6 +1,4 @@
-import { useCatalog } from "@/Contexts/Catalog/CatalogContext";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 type CustomFilterProps = {
@@ -12,67 +10,11 @@ type QueryProps = {
 };
 
 const CustomFilter: React.FC<CustomFilterProps> = (props) => {
-  const [filter, setFilter] = useState("");
-
-  const {
-    sortByName,
-    sortByPrice,
-    sortByAuthor,
-    sortByDate,
-    sortByRating,
-    catalogState,
-  } = useCatalog();
   const router = useRouter();
 
-  useEffect(() => {
-    const { filter } = router.query as QueryProps;
-
-    console.log("hahhahaha 1", catalogState.searchCatalog);
-
-    if (typeof filter !== "undefined") {
-      handleSelectFilter(filter);
-    }
-  }, []);
-
   function handleSelectFilter(value: string) {
-    const currentQuery = { ...router.query };
+    const currentQuery = { ...router.query } as QueryProps;
     currentQuery.filter = value;
-    //setFilter(value);
-
-    if (typeof catalogState.searchCatalog !== "undefined") {
-      if (typeof value !== "undefined") {
-        switch (value) {
-          case "Name": {
-            sortByName();
-            break;
-          }
-
-          case "Price": {
-            sortByPrice();
-            break;
-          }
-
-          case "Date": {
-            sortByDate();
-            break;
-          }
-
-          case "Rating": {
-            sortByRating();
-            break;
-          }
-
-          case "Author name": {
-            sortByAuthor();
-            break;
-          }
-
-          default: {
-            return;
-          }
-        }
-      }
-    }
 
     router.push(
       {
@@ -80,7 +22,10 @@ const CustomFilter: React.FC<CustomFilterProps> = (props) => {
         query: currentQuery,
       },
       undefined,
-      { shallow: true }
+      { 
+        shallow: false,
+        scroll: false,
+      }
     );
   }
 

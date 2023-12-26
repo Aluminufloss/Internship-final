@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { GetServerSideProps } from "next";
-import cookie from "cookie";
 
 import Layout from "@/components/layout/Layout";
 
@@ -14,14 +13,10 @@ import Avatar from "@/components/entities/Avatar";
 import { useAuth } from "@/Contexts/User/UserContext";
 import AuthService from "@/services/AuthService";
 import { IUser } from "@/models/response/Auth/IUser";
-import { DEFAULT_IMAGE } from "@/utils/constant/constant";
 import { checkTokens, encodeImageToBase64String } from "@/utils/helper/helper";
-
-// import { getServerSideProps } from "@/utils/helper/helper";
 
 type Props = {
   user: IUser;
-  isAuth: boolean;
   tokens?: { 
     aToken: string, 
     rToken: string, 
@@ -29,13 +24,7 @@ type Props = {
 };
 
 const User: React.FC<Props> = (props) => {
-  const { userState, setUser, uploadImage } = useAuth();
-
-  useEffect(() => {
-    (async () => {
-      setUser(props.user, props.isAuth);
-    })();
-  }, []);
+  const { userState, uploadImage } = useAuth();
 
   async function handleUploadPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
@@ -46,7 +35,7 @@ const User: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Header isAuth={props.isAuth} />
+      <Header isAuth={userState.isAuth} />
       {userState.user ? (
         <>
           <Avatar

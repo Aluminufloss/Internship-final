@@ -31,7 +31,7 @@ router.post("/favoriteDelete", authMiddleware, userController.addFavorite);
 
 router.post("/book", bookController.createBook);
 router.post("/getBook", bookController.getBookById);
-router.get("/getBooks", bookController.getBooks);
+router.post("/getBooks", bookController.getBooks);
 
 router.post("/comments", bookController.getComments);
 router.post("/commentCreate", authMiddleware, bookController.createComment);

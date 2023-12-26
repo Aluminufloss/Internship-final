@@ -49,15 +49,29 @@ const initialState: UserContextType = {
 
 const UserContext = createContext<UserContextType>(initialState);
 
+type InitialPropsType = {
+  user: IUser,
+  isAuth: boolean,
+  accessToken?: string,
+  refreshToken?: string,
+}
+
 type UserProviderType = {
   children?: React.ReactNode;
+  initialState: InitialPropsType;
 };
 
-function UserProvider(
-  { children }: UserProviderType,
-  initialState: AuthentificationState
-) {
-  const [userState, dispatch] = useReducer(userReducer, initialState);
+
+const getInitialState = (params: InitialPropsType):AuthentificationState => {
+  return {
+    isLoading: true,
+    error: "",
+    ...params,
+  }
+}
+
+const UserProvider: React.FC<UserProviderType> = (props) => {
+  const [userState, dispatch] = useReducer(userReducer, props.initialState, getInitialState);
 
   async function login(email: string, password: string) {
     dispatch({ type: ActionKind.Loading });
@@ -160,7 +174,7 @@ function UserProvider(
         setTokens,
       }}
     >
-      {children}
+      {props.children}
     </UserContext.Provider>
   );
 }

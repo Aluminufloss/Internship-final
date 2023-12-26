@@ -1,15 +1,20 @@
 import React from "react";
+import Image from "next/image";
 import styled from "styled-components";
+import { useRouter } from "next/router";
+
+import StarRating from "../features/StarRating";
+
 import Text from "../shared/Text";
 import Button from "../shared/Button";
-import StarRating from "../features/StarRating";
+
+
 import { IBook } from "@/models/response/Book/IBook";
-import Image from "next/image";
+
+import { useAuth } from "@/Contexts/User/UserContext";
+
 import { DEFAULT_IMAGE } from "@/utils/constant/constant";
 import { convertRating } from "@/utils/helper/helper";
-import { useAuth } from "@/Contexts/User/UserContext";
-import { useCart } from "@/Contexts/Cart/CartContext";
-import { Router, useRouter } from "next/router";
 
 type BookProps = {
   book: IBook;
@@ -22,7 +27,6 @@ const Book: React.FC<BookProps> = (props) => {
   const router = useRouter();
 
   const { userState } = useAuth();
-  const { addToCart } = useCart();
 
   const price = Number.isInteger(props.book.price)
     ? `$ ${props.book.price}.00 USD`
@@ -36,11 +40,11 @@ const Book: React.FC<BookProps> = (props) => {
     ev.stopPropagation();
 
     try {
-      await addToCart(
-        props.book._id!,
-        userState.accessToken as string,
-        userState.refreshToken as string
-      );
+      // await addToCart(
+      //   props.book._id!,
+      //   userState.accessToken as string,
+      //   userState.refreshToken as string
+      // );
     } catch (err) {
       throw err;
     }

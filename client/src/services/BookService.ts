@@ -4,8 +4,8 @@ import { BookResponse, SingleBookResponse } from "@/models/response/Book/BookRes
 import { CommentResponse } from "@/models/response/Comment/CommentResponse";
 
 export default class BookService {
-  static async getBooks(): Promise<AxiosResponse<BookResponse>> {
-    return $api.get<BookResponse>("/getBooks");
+  static async getBooks(filter: string | string[], genre: string | string[]): Promise<AxiosResponse<BookResponse>> {
+    return $api.post<BookResponse>("/getBooks", { filter, genre });
   }
 
   static async getBook(_id: string): Promise<AxiosResponse<SingleBookResponse>> {

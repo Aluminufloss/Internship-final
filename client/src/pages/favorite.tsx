@@ -12,7 +12,6 @@ import Layout from "@/components/layout/Layout";
 import AuthService from "@/services/AuthService";
 
 import { useAuth } from "@/Contexts/User/UserContext";
-import { useFavorite } from "@/Contexts/Favorite/FavoriteContext";
 
 import { IBook } from "@/models/response/Book/IBook";
 import { IUser } from "@/models/response/Auth/IUser";
@@ -30,19 +29,7 @@ type Props = {
 };
 
 const Cart: React.FC<Props> = (props) => {
-  const { userState, setUser, setTokens } = useAuth();
-  const { favoriteState, setFavorite } = useFavorite();
-
-  useEffect(() => {
-    (async () => {
-      setUser(props.user, props.isAuth);
-      setFavorite(props.books);
-
-      if (typeof props.tokens !== "undefined") {
-        setTokens(props.tokens.accessToken, props.tokens.refreshToken);
-      }
-    })();
-  }, []);
+  const { userState } = useAuth();
 
   return (
     <Layout>
@@ -57,7 +44,6 @@ const Cart: React.FC<Props> = (props) => {
           className="favorite__book-list"
           books={props.books}
           isAdded={true}
-          isAuth={userState.isAuth}
         />
       )}
       <Footer />

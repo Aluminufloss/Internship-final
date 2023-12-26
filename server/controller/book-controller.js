@@ -13,7 +13,8 @@ class BookContoller {
 
   async getBooks(req, res, next) {
     try {
-      const books = await bookService.getBooks();
+      const { filter, genre } = req.body;
+      const books = await bookService.getBooks(filter, genre);
       return res.json(books);
     } catch (err) {
       next(err);

@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
+
 import Text from "../shared/Text";
+
 import { IBook } from "@/models/response/Book/IBook";
+
 import { DEFAULT_IMAGE } from "@/utils/constant/constant";
-import { correctPrice } from "@/utils/helper/helper";
+
 import { useAuth } from "@/Contexts/User/UserContext";
-import { useCart } from "@/Contexts/Cart/CartContext";
+
+import { correctPrice } from "@/utils/helper/helper";
 
 type BookProps = {
   book: IBook;
@@ -16,7 +20,6 @@ type BookProps = {
 
 const CartBook: React.FC<BookProps> = (props) => {
   const { userState } = useAuth();
-  const { deleteFromCart } = useCart();
   const [totalPrice, setTotalPrice] = useState(props.book.price);
   const [orderAmount, setOrderAmount] = useState(1);
 
@@ -44,19 +47,23 @@ const CartBook: React.FC<BookProps> = (props) => {
 
   async function handleDelete() {
     try {
-      deleteFromCart(
-        props.book._id!,
-        userState.accessToken as string,
-        userState.refreshToken as string
-      );
+      // deleteFromCart(
+      //   props.book._id!,
+      //   userState.accessToken as string,
+      //   userState.refreshToken as string
+      // );
       props.handleAddToTheTotal(-totalPrice);
     } catch (err) {
-      throw(err);
+      throw err;
     }
   }
 
   return (
-    <StyledCartBook book={props.book} className={props.className} handleAddToTheTotal={props.handleAddToTheTotal}>
+    <StyledCartBook
+      book={props.book}
+      className={props.className}
+      handleAddToTheTotal={props.handleAddToTheTotal}
+    >
       <div className="book__container">
         <Image
           className="book__image"
@@ -89,9 +96,19 @@ const CartBook: React.FC<BookProps> = (props) => {
           </Text>
           <div className="book__buttons">
             <div className="book__order-amount">
-              <button className="book__order-amount--minus" onClick={handleClickDecrease}>-</button>
+              <button
+                className="book__order-amount--minus"
+                onClick={handleClickDecrease}
+              >
+                -
+              </button>
               {orderAmount}
-              <button className="book__order-amount--plus" onClick={handleClickIncrease}>+</button>
+              <button
+                className="book__order-amount--plus"
+                onClick={handleClickIncrease}
+              >
+                +
+              </button>
             </div>
             <button
               className="book__delete-amount"
