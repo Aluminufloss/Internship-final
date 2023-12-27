@@ -8,23 +8,9 @@ import CustomFilter from "../entities/CustomFilter";
 
 type FilterProps = {};
 
-const SIZE = {
-  small: css`
-    height: 47px;
-  `,
-  medium: css`
-    height: 64px;
-  `,
-
-  large: css`
-    height: 64px;
-  `,
-};
-
 const Filtres: React.FC<FilterProps> = (props) => {
   return (
-    <>
-      <StyledFilters className="filter__group">
+    <StyledFiltersContainer className="filter__group">
       <Text
         color="dark"
         fontWeight="bold"
@@ -33,15 +19,16 @@ const Filtres: React.FC<FilterProps> = (props) => {
       >
         Catalog
       </Text>
-      <GenreFilter />
-      {/* <MoneyFilter /> */}
-      <CustomFilter />
+      <StyledFilters className="filter__group">
+        <GenreFilter className="filter"/>
+        {/* <MoneyFilter /> */}
+        <CustomFilter className="filter"/>
       </StyledFilters>
-    </>
+    </StyledFiltersContainer>
   );
 };
 
-const StyledFilters = styled.div`
+const StyledFiltersContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -54,41 +41,51 @@ const StyledFilters = styled.div`
     }
   }
 
-  select {
-    height: 48px;
-    position: relative;
-    width: 100%;
-    padding: 10px 0 10px 15px;
-    background-color: ${(props) => props.theme.colors.light};
-    border-radius: 16px;
-    border: none;
-    appearance: none;
-    color: ${(props) => props.theme.colors.darkBlue};
-    font-size: ${(props) => props.theme.colors.smallBig};
-    font-weight: 500;
+  @media (min-width: 720px) {
+    .filter__text {
+      font-size: ${(props) => props.theme.fontSizes.bigLarge};
+      margin-bottom: 20px;
+      margin-top: 60px;
+    }
+  }
+`;
+
+const StyledFilters = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .filter {
+    margin-bottom: 20px;
   }
 
   .filter__select--container {
-      position: relative;
-      width: 100%;
-      height: 48px;
+    position: relative;
+    width: 100%;
+    height: 48px;
+    margin-bottom: 20px;
+  }
+
+  .filter__text {
+    align-self: flex-start;
+  }
+
+  & select {
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 720px) {
+    flex-direction: row;
+    gap: 20px;
+    margin-bottom: 50px;
+
+    .filter__text {
+      font-size: ${(props) => props.theme.fontSizes.bigLarge};
       margin-bottom: 20px;
     }
-
-    .filter__select--icon {
-      position: absolute;
-      top: 12px;
-      right: 8px;
-      width: 24px;
-      height: 24px;
-      background: transparent;
-      background-image: url("/images/icons/Select.svg");
-      background-repeat: no-repeat;
-    }
-    
-    .filter__text {
-      align-self: flex-start;
-    }
+  }
 `;
 
 export default Filtres;

@@ -35,13 +35,20 @@ class BookService {
     return book.save();
   }
 
-  async getBooks(filter, genre) {
+  async getBooks(filter, genre, page) {
+    const limit = 12;
     let books = [];
 
-    if (genre) {
-      books = await BookModel.find({ genre: genre });
+    if (!page) {
+      page = 0;
     } else {
-      books = await BookModel.find({ });
+      page = --page;
+    }
+
+    if (genre) {
+      books = await BookModel.find({ genre: genre }).skip(page * limit).limit(limit);
+    } else {
+      books = await BookModel.find().skip(page * limit).limit(limit);
     }
 
     if (filter) {
@@ -52,22 +59,18 @@ class BookService {
 
         case "Author name":
           books = books.sort((a, b) => a.author.localeCompare(b.author));
-          console.log("2");
           break;
 
         case "Price":
           books = books.sort((a, b) => a.price > b.price ? -1 : 1);
-          console.log("3");
           break;
 
         case "Rating":
           books = books.sort((a, b) => a.rating > b.rating ? -1 : 1);
-          console.log("4");
           break;
 
         case "Date":
           books = books.sort((a, b) => a.rating > b.rating ? -1 : 1);
-          console.log("5");
           break;
 
         default:
@@ -75,7 +78,13 @@ class BookService {
       }
     }
 
-    return books;
+    const nextPage = await BookModel.find().skip((page + 1) * limit + 1).limit(1);
+
+    if (nextPage.length === 0) {
+      return { books: books, hasNextPage: false };
+    } else {
+      return { books: books, hasNextPage: true };
+    }
   }
 
   async getBookById(_id) {

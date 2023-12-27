@@ -68,7 +68,6 @@ const StyledGenreFilter = styled.div<GenreFilterProps>`
   position: relative;
   width: 100%;
   height: 48px;
-  margin-bottom: 20px;
 
   select {
     height: 48px;

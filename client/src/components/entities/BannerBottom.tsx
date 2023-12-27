@@ -16,7 +16,7 @@ const BannerBottom: React.FC<BannerProps> = (props) => {
   const router = useRouter();
 
   function handleClick() {
-    router.push('/login');
+    router.push("/login");
   }
 
   return (
@@ -26,9 +26,14 @@ const BannerBottom: React.FC<BannerProps> = (props) => {
         width={246}
         height={391}
         alt="Books"
+        unoptimized={true}
         className="image__art"
       />
-      <Text fontWeight="bold" fontSize="mediumBig" className="title">
+      <Text 
+        fontWeight="bold" 
+        fontSize="mediumBig" 
+        className="title"
+      >
         {props.bannerTitle}
       </Text>
       <Text className="subtitle">{props.bannerSubtitle}</Text>
@@ -48,6 +53,7 @@ const BannerBottom: React.FC<BannerProps> = (props) => {
         width={282}
         height={250}
         alt="Girl's reading a book"
+        unoptimized={true}
         className="image"
       />
     </StyledBanner>
@@ -90,6 +96,26 @@ const StyledBanner = styled.div`
   .title,
   .subtitle {
     margin-bottom: 20px;
+  }
+
+  @media (min-width: 720px) {
+    height: 400px;
+    margin-bottom: 100px;
+
+    .image {
+      width: 369px;
+      height: 345px;
+      left: 0;
+      bottom: 0;
+      transform: none;
+
+      &__art {
+        width: 350px;
+        top: auto;
+        bottom: -70px;
+        right: -6px;
+      }
+    }
   }
 `;
 

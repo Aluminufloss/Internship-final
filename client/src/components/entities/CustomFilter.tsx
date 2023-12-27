@@ -52,7 +52,6 @@ const StyledGustomFilter = styled.div<CustomFilterProps>`
   position: relative;
   width: 100%;
   height: 48px;
-  margin-bottom: 20px;
 
   select {
     height: 48px;

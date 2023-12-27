@@ -48,8 +48,13 @@ const StyledBookList = styled.ul`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
-  grid-template-rows: repeat(2, minmax(333px, min-content));
+  grid-template-rows: minmax(333px, min-content);
   gap: 30px 20px;
+
+  @media (min-width: 720px) {
+    grid-template-columns: repeat(auto-fill, minmax(254px, 1fr));
+    grid-template-rows: minmax(372px, min-content);
+  }
 `;
 
 export default BookList;

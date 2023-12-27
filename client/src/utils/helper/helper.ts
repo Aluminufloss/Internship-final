@@ -6,13 +6,16 @@ import { ParsedUrlQuery } from "querystring";
 import cookie from "cookie";
 import { CommentResponse } from "@/models/response/Comment/CommentResponse";
 import { BookResponse } from "@/models/response/Book/BookResponse";
-import { useCatalog } from "@/Contexts/Catalog/CatalogContext";
 
 type CheckTokensResult = {
   context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>;
   aToken: string;
   rToken: string;
 };
+
+type QueryProps = {
+  page?: string;
+}
 
 export function getMediaQuery(minWidth: number): string {
   return `@media (min-width: ${minWidth}px)`;
@@ -127,4 +130,8 @@ export function checkTokens(
     console.log("You don't have headers in your response");
     return { context, aToken: "", rToken: "" };
   }
+}
+
+export function checkPage(queryPage: QueryProps) {
+  
 }

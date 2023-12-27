@@ -8,6 +8,8 @@ type BannerProps = {
   bannerTitle: string;
   bannerSubtitle: string;
   buttonText: string;
+
+
 };
 
 const Banner: React.FC<BannerProps> = (props) => {
@@ -40,6 +42,7 @@ const Banner: React.FC<BannerProps> = (props) => {
         height={282}
         alt="Girl's reading a book"
         className="image"
+        unoptimized={true}
       />
     </StyledBanner>
   );
@@ -81,6 +84,86 @@ const StyledBanner = styled.div`
   .button {
     position: relative;
     z-index: 100;
+  }
+
+  @media (min-width: 720px) {
+    height: 289px;
+    overflow: visible;
+    align-items: flex-start;
+    padding-top: 45px;
+    padding-left: 40px;
+
+    .image {
+      height: 364px;
+      width: 328px;
+      right: 14px;
+      bottom: 0;
+      left: auto;
+      transform: none;
+
+      &__books {
+        width: 361px;
+        height: 218px;
+        top: auto;
+        left: 0;
+        bottom: 0;
+      }
+    }
+
+    .title {
+      font-size: ${props => `${props.theme.fontSizes.bigLarge}`};
+    }
+
+    .subtitle {
+      font-size: ${props => `${props.theme.fontSizes.medium}`};
+      color: ${props => `${props.theme.colors.darkBlue}`};
+    }
+
+    .button {
+      width: 230px;
+      height: 44px;
+
+    }
+  }
+
+  @media (min-width: 720px) {
+    height: 289px;
+    overflow: visible;
+    align-items: flex-start;
+    padding-top: 45px;
+    padding-left: 40px;
+
+    .image {
+      height: 364px;
+      width: 328px;
+      right: 14px;
+      bottom: 0;
+      left: auto;
+      transform: none;
+
+      &__books {
+        width: 361px;
+        height: 218px;
+        top: auto;
+        left: 0;
+        bottom: 0;
+      }
+    }
+
+    .title {
+      font-size: ${props => `${props.theme.fontSizes.bigLarge}`};
+    }
+
+    .subtitle {
+      font-size: ${props => `${props.theme.fontSizes.medium}`};
+      color: ${props => `${props.theme.colors.darkBlue}`};
+    }
+
+    .button {
+      width: 230px;
+      height: 44px;
+      
+    }
   }
 `;
 

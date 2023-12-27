@@ -1,22 +1,45 @@
 import Link from "next/link";
 import React from "react";
 import styled from "styled-components";
+import { useRouter } from "next/router";
 
 type PaginationProps = {
 
 };
 
+type QueryProps = {
+  page?: string;
+}
+
 const Pagination: React.FC<PaginationProps> = (props) => {
- 
+  const router = useRouter();
+  const page = router.query.page as QueryProps;
+
+  const handleNextPage = () => {
+    const nextPage = page ? Number(page) + 1 : 2;
+    router.push(`/catalog?page=${nextPage}`, undefined, { shallow: true });
+  }
+
+  const handlePreviousPage = () => {
+    const previousPage = page ? Number(page) - 1 : "";
+    if (!previousPage) {
+      router.push(`/catalog`, undefined, { shallow: true });
+    } else {
+      router.push(`/catalog?page=${previousPage}`, undefined, { shallow: true });
+    }
+  }
+
+  //${page ? Number(page) - 1 > 0 ? Number(page) - 1 : 1 : 1}
+
   return (
     <StyledPagination>
-      <span className="pagination__arrow pagination__arrow--left"></span>
+      <span className="pagination__arrow pagination__arrow--left" onClick={handlePreviousPage}></span>
       <div className="pagination__circle--container">
         <Link href={`/catalog?page=1`} className="pagination__circle pagination__circle--active"></Link> 
-        <Link href={`/catalog?page=2`} className="pagination__circle" shallow scroll={false}></Link>      
-        <Link href={`/catalog?page=3`} className="pagination__circle" shallow></Link>
+        <Link href={`/catalog?page=2`} className="pagination__circle" scroll={false}></Link>      
+        <Link href={`/catalog?page=3`} className="pagination__circle"></Link>
       </div> 
-      <span className="pagination__arrow pagination__arrow--right"></span>            
+      <span className="pagination__arrow pagination__arrow--right" onClick={handleNextPage}></span>            
     </StyledPagination>
   );
 };

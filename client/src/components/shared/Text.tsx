@@ -13,6 +13,7 @@ type TextProps = {
     | "mediumBig"
     | "mediumLarge"
     | "big"
+    | "bigLarge"
     | "large";
   fontWeight?:
     "light"

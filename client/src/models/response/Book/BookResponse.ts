@@ -2,6 +2,7 @@ import { IBook } from "./IBook";
 
 export interface BookResponse {
   books: IBook[];
+  hasNextPage?: boolean;
   accessToken?: string;
   refreshToken?: string;
 }

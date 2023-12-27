@@ -2,9 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const FilterLoader = () => {
-  return (
-    <StyledFilterLoader />
-  );
+  return <StyledFilterLoader />;
 };
 
 const StyledFilterLoader = styled.div`
@@ -19,10 +17,10 @@ const StyledFilterLoader = styled.div`
   transition: all 0.3s ease;
 
   @keyframes shine {
-      to {
-        background-position-x: -200%;
-      }
+    to {
+      background-position-x: -200%;
     }
+  }
 `;
 
 export default FilterLoader;

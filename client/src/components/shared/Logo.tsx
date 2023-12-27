@@ -1,36 +1,23 @@
+import Image from 'next/image';
 import { useRouter } from 'next/router';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 type LogoProps = {
   type: "smallWhite" | "largeWhite" | "smallBlack" | "largeBlack";
   className?: string;
 }
 
-const TYPE = {
-  smallBlack: css`
-    background-image: url("images/logo/logo-small.png");
-    width: 62px;
-    height: 31px;
-  `,
-  largeBlack: css`
-    background-image: url("images/logo/logo.png");
-    width: 88px;
-    height: 46px;
-  `,
-  smallWhite: css`
-    background-image: url("images/logo/logo-small-white.png");
-    width: 62px;
-    height: 31px;
-  `,
-  largeWhite: css`
-    background-image: url("images/logo/logo-white.png");
-    width: 88px;
-    height: 46px;
-  `,
-};
+enum IMAGE_TYPE {
+  "smallWhite" = "images/logo/logo-small-white.png",
+  "largeWhite" = "images/logo/logo-white.png",
+  "smallBlack" = "images/logo/logo-small.png",
+  "largeBlack" = "images/logo/logo.png",
+}
 
 const Logo: React.FC<LogoProps> = (props) => {
+  const image = IMAGE_TYPE[props.type]
   const router = useRouter();
+  console.log("Ebbaaa", IMAGE_TYPE[props.type])
 
   function handleClick() {
     router.push('/catalog');
@@ -38,15 +25,27 @@ const Logo: React.FC<LogoProps> = (props) => {
 
   return (
     <StyledLogo 
-      type={props.type} 
-      onClick={handleClick} 
+      src={IMAGE_TYPE[props.type]}
+      onError={(e) => {
+        (e.target as HTMLImageElement).onerror = null;
+        (e.target as HTMLImageElement).src = IMAGE_TYPE.smallWhite;
+      }}
+      width={1}
+      height={1}
+      alt="Logo image"
+      unoptimized={true}
       className={props.className}
     />
+
+    // <StyledLogo 
+    //   type={props.type} 
+    //   onClick={handleClick} 
+    //   className={props.className}
+    // />
   );
 };
 
-const StyledLogo = styled.div<LogoProps>`
-  ${(props) => props.type && TYPE[props.type]}
+const StyledLogo = styled(Image)<LogoProps>`
   background-repeat: no-repeat;
   background-size: cover;
 `

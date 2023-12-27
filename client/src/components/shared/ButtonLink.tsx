@@ -39,6 +39,11 @@ const StyledButtonLink = styled(Link)<ButtonIconProps>`
   &:active {
     transform: scale(1) translateY(2px);
   }
+
+  @media (min-width: 720px) {
+    width: 48px;
+    height: 48px;
+  }
 `;
 
 export default ButtonLink;

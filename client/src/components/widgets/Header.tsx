@@ -6,11 +6,10 @@ import Button from "../shared/Button";
 import Search from "../shared/Search";
 import ButtonLink from "../shared/ButtonLink";
 import { useRouter } from "next/router";
-import { useAuth } from "@/Contexts/User/UserContext";
 
 type HeaderProps = {
   isAuth?: boolean;
-  handleSearch?: (value: string) => void
+  handleSearch?: (value: string) => void;
 };
 
 const Header: React.FC<HeaderProps> = (props) => {
@@ -29,7 +28,7 @@ const Header: React.FC<HeaderProps> = (props) => {
 
   return (
     <StyledHeader>
-      <Logo type="smallWhite" className="logo" />
+      <Logo className="logo" type="largeBlack" />
       <Text fontSize="smallBig" className="text">
         Catalog
       </Text>
@@ -99,6 +98,38 @@ const StyledHeader = styled.header`
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .text {
+    font-weight: 500;
+  }
+
+  @media (min-width: 720px) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+      width: 86px;
+      height: 46px;
+    }
+
+    .search {
+      width: 40%;
+      order: 3;
+      z-index: 1000;
+    }
+
+    .btn-group,
+    .button {
+      order: 4;
+    }
+
+    .button {
+      width: 231px;
+      height: 44px;
+      font-size: ${props => props.theme.fontSizes.medium};
+    }
   }
 `;
 export default Header;

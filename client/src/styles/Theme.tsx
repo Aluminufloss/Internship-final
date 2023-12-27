@@ -25,6 +25,7 @@ const theme = {
     mediumBig: "18px",
     mediumLarge: "20px",
     big: "20px",
+    bigLarge: "32px",
     large: "40px",
   },
 

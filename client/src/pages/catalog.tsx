@@ -25,6 +25,7 @@ type Props = {
   user: IUser;
   isAuth: boolean;
   books: IBook[];
+  hasNextPage: boolean;
   tokens?: {
     accessToken: string;
     refreshToken: string;
@@ -58,11 +59,11 @@ const Home: React.FC<Props> = (props) => {
 
         <Pagination />
 
-        <BannerBottom
+        {!props.isAuth && <BannerBottom
           bannerTitle="Authorize now"
           bannerSubtitle="Authorize now and discover the fabulous world of books"
           buttonText="Log In/ Sing Up"
-        />
+        />}
       </Layout>
       <Footer />
     </>
@@ -74,6 +75,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { refreshToken, accessToken } = ctx.req.cookies;
     const filter = ctx.query.filter ?? "";
     const genre = ctx.query.genre ?? "";
+    const page = ctx.query.page ?? "";
 
     const response = await AuthService.getMe(
       refreshToken as string,
@@ -87,8 +89,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
      * If we have user, we will try to get books
      */
     try {
-      const responseBooks = await BookService.getBooks(filter, genre);
-      const books = responseBooks.data;
+      const responseBooks = await BookService.getBooks(filter, genre, page);
+      const books = responseBooks.data.books;
+      const hasNextPage = responseBooks.data.hasNextPage;
 
       /**
        * If we have user and books
@@ -98,6 +101,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           user,
           isAuth: true,
           books,
+          hasNextPage,
           tokens: { accessToken: aToken, refreshToken: rToken },
         },
       };
@@ -109,7 +113,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         props: {
           user,
           isAuth: true,
-          books: {},
+          books: [],
+          hasNextPage: false,
           tokens: { accessToken: aToken, refreshToken: rToken },
         },
       };
@@ -121,15 +126,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     try {
       const filter = ctx.query.filter ?? "";
       const genre = ctx.query.genre ?? "";
+      const page = ctx.query.page ?? "";
 
-      const responseBooks = await BookService.getBooks(filter, genre);
-      const books = responseBooks.data;
+      const responseBooks = await BookService.getBooks(filter, genre, page);
+      const books = responseBooks.data.books;
+      const hasNextPage = responseBooks.data.hasNextPage;
 
       return {
         props: {
           user: {},
           isAuth: false,
           books,
+          hasNextPage,
           tokens: { aToken: "", rToken: "" },
         },
       };
@@ -141,7 +149,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         props: {
           user: {},
           isAuth: false,
-          books: {},
+          hasNextPage: false,
+          books: [],
           tokens: { aToken: "", rToken: "" },
         },
       };
