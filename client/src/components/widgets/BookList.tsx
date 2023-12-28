@@ -8,6 +8,7 @@ import EmptyFilter from "../entities/EmptyFilter";
 import { IBook } from "@/models/response/Book/IBook";
 
 import { useAuth } from "@/Contexts/User/UserContext";
+import media from "@/utils/helper/helper";
 
 type BookListProps = {
   books: IBook[];
@@ -50,10 +51,15 @@ const StyledBookList = styled.ul`
   grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
   grid-template-rows: minmax(333px, min-content);
   gap: 30px 20px;
+  margin-bottom: 40px;
 
-  @media (min-width: 720px) {
-    grid-template-columns: repeat(auto-fill, minmax(254px, 1fr));
+  ${media.tablet} {
+    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
     grid-template-rows: minmax(372px, min-content);
+  }
+
+  ${media.extraDesktop} {
+    grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
   }
 `;
 

@@ -14,7 +14,7 @@ import Layout from "@/components/layout/Layout";
 import Header from "@/components/widgets/Header";
 import Footer from "@/components/widgets/Footer";
 
-import useAuth from "@/Contexts/User/UserContext";
+import { useAuth } from "@/Contexts/User/UserContext";
 import BookInformation from "@/components/widgets/BookInformation";
 import BannerBottom from "@/components/entities/BannerBottom";
 import CreateComment from "@/components/features/CreateComment";

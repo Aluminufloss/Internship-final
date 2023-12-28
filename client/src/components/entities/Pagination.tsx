@@ -29,8 +29,6 @@ const Pagination: React.FC<PaginationProps> = (props) => {
     }
   }
 
-  //${page ? Number(page) - 1 > 0 ? Number(page) - 1 : 1 : 1}
-
   return (
     <StyledPagination>
       <span className="pagination__arrow pagination__arrow--left" onClick={handlePreviousPage}></span>
@@ -50,7 +48,6 @@ const StyledPagination = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 70px;
-  margin-top: 40px;
 
   .pagination {
     &__circle {

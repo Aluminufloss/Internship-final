@@ -8,16 +8,15 @@ type LogoProps = {
 }
 
 enum IMAGE_TYPE {
-  "smallWhite" = "images/logo/logo-small-white.png",
-  "largeWhite" = "images/logo/logo-white.png",
-  "smallBlack" = "images/logo/logo-small.png",
-  "largeBlack" = "images/logo/logo.png",
+  "smallWhite" = "/images/logo/logo-small-white.png",
+  "largeWhite" = "/images/logo/logo-white.png",
+  "smallBlack" = "/images/logo/logo-small.png",
+  "largeBlack" = "/images/logo/logo.png",
 }
 
 const Logo: React.FC<LogoProps> = (props) => {
   const image = IMAGE_TYPE[props.type]
   const router = useRouter();
-  console.log("Ebbaaa", IMAGE_TYPE[props.type])
 
   function handleClick() {
     router.push('/catalog');
@@ -34,14 +33,9 @@ const Logo: React.FC<LogoProps> = (props) => {
       height={1}
       alt="Logo image"
       unoptimized={true}
+      onClick={handleClick}
       className={props.className}
     />
-
-    // <StyledLogo 
-    //   type={props.type} 
-    //   onClick={handleClick} 
-    //   className={props.className}
-    // />
   );
 };
 

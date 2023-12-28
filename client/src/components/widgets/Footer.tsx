@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Logo from "../shared/Logo";
 import Text from "../shared/Text";
 import LinkTo from "../shared/Link";
+import Image from "next/image";
+import media from "@/utils/helper/helper";
 
 const Footer: React.FC = () => {
   return (
@@ -16,7 +18,8 @@ const Footer: React.FC = () => {
             color="white"
             className="logo__text"
           >
-            tranthuy.nute@gmail.com (480)-555-0103
+            tranthuy.nute@gmail.com 
+            <br/>(480)-555-0103
           </Text>
         </div>
 
@@ -37,10 +40,16 @@ const Footer: React.FC = () => {
 
         <div className="map__container">
           <Text fontSize="medium" fontWeight="medium" color="white">
-            6391 Elgin St. Celina, Delaware
-            <br /> 10299
+            6391 Elgin St. Celina, Delaware 10299
           </Text>
-          <div className="map" />
+          <Image
+            width={1}
+            height={1}
+            src={"/images/map/map-small.png"}
+            alt={"map"}
+            className="map"
+            unoptimized={true}
+          />
         </div>
       </div>
     </StyledFooter>
@@ -54,16 +63,13 @@ const StyledFooter = styled.footer`
   background-color: ${(props) => props.theme.colors.dark};
 
   .footer__inner {
-    margin: 0 14px 30px 15px;
-    padding-top: 73px;
+    padding: 73px 14px 30px 15px;
   }
 
   .logo {
+    width: 88px;
+    height: 46px;
     margin-bottom: 30px;
-  }
-
-  .logo__text {
-    overflow-wrap: normal;
   }
 
   .links__container {
@@ -78,22 +84,43 @@ const StyledFooter = styled.footer`
   }
 
   .link:hover {
-    color: ${props => props.theme.colors.light};
+    color: ${(props) => props.theme.colors.light};
   }
 
   .map {
     width: 100%;
-    height: 160px;
+    height: 100%;
     border-radius: 6px;
-    background-image: url("images/map/map-small.png");
     background-repeat: no-repeat;
     background-size: cover;
   }
 
   .map__container {
+    position: relative;
     display: flex;
     flex-direction: column;
-    /* padding: 0 15px 30px; */
+    height: 160px;
+    width: 291px;
+  }
+
+  ${media.tablet} {
+    height: 341px;
+    
+    .footer__inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 73px 15px 79px 20px;
+    }
+
+    .links__container {
+      margin: 0;
+    }
+
+    .map__container {
+      width: 340px;
+    }
   }
 `;
 

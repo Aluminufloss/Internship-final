@@ -22,25 +22,21 @@ export function getMediaQuery(minWidth: number): string {
 }
 
 export const mediaValues = {
-  desktop: 720,
-  extraDesktop: 940,
-  ld: 1090, // large desktop
-  extraLd: 1435,
+  tablet: 720,
+  desktop: 940,
+  extraDesktop: 1090, // large desktop
+  ld: 1435,
 };
 
 const media = {
   custom: getMediaQuery,
+  tablet: getMediaQuery(mediaValues.tablet),
   desktop: getMediaQuery(mediaValues.desktop),
   extraDesktop: getMediaQuery(mediaValues.extraDesktop),
   ld: getMediaQuery(mediaValues.ld),
-  extraLd: getMediaQuery(mediaValues.extraLd),
 };
 
 export default media;
-
-export function getIsMobile(): boolean {
-  return !window.matchMedia("(min-width: 720px)").matches;
-}
 
 export function encodeImageToBase64String<T extends File>(
   image: T

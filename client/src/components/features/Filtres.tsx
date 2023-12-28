@@ -5,6 +5,7 @@ import Text from "../shared/Text";
 import GenreFilter from "../entities/GenreFilter";
 import MoneyFilter from "../entities/MoneyFilter";
 import CustomFilter from "../entities/CustomFilter";
+import media from "@/utils/helper/helper";
 
 type FilterProps = {};
 
@@ -20,9 +21,9 @@ const Filtres: React.FC<FilterProps> = (props) => {
         Catalog
       </Text>
       <StyledFilters className="filter__group">
-        <GenreFilter className="filter"/>
+        <GenreFilter className="filter" />
         {/* <MoneyFilter /> */}
-        <CustomFilter className="filter"/>
+        <CustomFilter className="filter" />
       </StyledFilters>
     </StyledFiltersContainer>
   );
@@ -34,6 +35,7 @@ const StyledFiltersContainer = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
+  margin-top: 20px;
 
   .filter {
     &__text {
@@ -41,12 +43,24 @@ const StyledFiltersContainer = styled.div`
     }
   }
 
-  @media (min-width: 720px) {
+  ${media.tablet} {
     .filter__text {
       font-size: ${(props) => props.theme.fontSizes.bigLarge};
       margin-bottom: 20px;
       margin-top: 60px;
     }
+  }
+
+  ${media.extraDesktop} {
+    flex-direction: row;
+    margin-bottom: 38px;
+    margin-top: 110px;
+
+    .filter {
+    &__text {
+      margin: 0;
+    }
+  }
   }
 `;
 
@@ -76,7 +90,7 @@ const StyledFilters = styled.div`
     margin-bottom: 20px;
   }
 
-  @media (min-width: 720px) {
+  ${media.tablet} {
     flex-direction: row;
     gap: 20px;
     margin-bottom: 50px;
@@ -85,6 +99,10 @@ const StyledFilters = styled.div`
       font-size: ${(props) => props.theme.fontSizes.bigLarge};
       margin-bottom: 20px;
     }
+  }
+
+  ${media.extraDesktop} {
+    margin-bottom: 0;
   }
 `;
 

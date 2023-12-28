@@ -19,13 +19,12 @@ import { convertRating } from "@/utils/helper/helper";
 type BookProps = {
   book: IBook;
   onClick: (book: IBook) => void;
-  isAuth: boolean;
+  isAuth?: boolean;
   isAdded?: boolean;
 };
 
 const Book: React.FC<BookProps> = (props) => {
   const router = useRouter();
-
   const { userState } = useAuth();
 
   const price = Number.isInteger(props.book.price)
@@ -58,7 +57,7 @@ const Book: React.FC<BookProps> = (props) => {
     <StyledBook
       book={props.book}
       onClick={(ev) => props.onClick(props.book)}
-      isAuth={props.isAuth}
+      isAuth={userState.isAuth}
       isAdded={props.isAdded}
     >
       <div className="book__image--container">

@@ -3,13 +3,12 @@ import styled from "styled-components";
 import Image from "next/image";
 import Text from "../shared/Text";
 import Button from "../shared/Button";
+import media from "@/utils/helper/helper";
 
 type BannerProps = {
   bannerTitle: string;
   bannerSubtitle: string;
   buttonText: string;
-
-
 };
 
 const Banner: React.FC<BannerProps> = (props) => {
@@ -53,7 +52,6 @@ const StyledBanner = styled.div`
   height: 505px;
   border-radius: 16px;
   padding: 20px 20px 0 20px;
-  margin-bottom: 20px;
   background-color: ${(props) => props.theme.colors.light};
   display: flex;
   flex-direction: column;
@@ -86,7 +84,7 @@ const StyledBanner = styled.div`
     z-index: 100;
   }
 
-  @media (min-width: 720px) {
+  ${media.tablet} {
     height: 289px;
     overflow: visible;
     align-items: flex-start;
@@ -126,43 +124,27 @@ const StyledBanner = styled.div`
     }
   }
 
-  @media (min-width: 720px) {
-    height: 289px;
-    overflow: visible;
-    align-items: flex-start;
-    padding-top: 45px;
-    padding-left: 40px;
+  ${media.extraDesktop} {
+    height: 400px;
+    padding-left: 68px;
 
     .image {
-      height: 364px;
-      width: 328px;
-      right: 14px;
-      bottom: 0;
-      left: auto;
-      transform: none;
-
-      &__books {
-        width: 361px;
-        height: 218px;
-        top: auto;
-        left: 0;
-        bottom: 0;
-      }
+      height: 400px;
+      width: 406px;
+      right: 0;
     }
 
     .title {
-      font-size: ${props => `${props.theme.fontSizes.bigLarge}`};
+      font-size: ${props => `${props.theme.fontSizes.large}`};
     }
 
     .subtitle {
-      font-size: ${props => `${props.theme.fontSizes.medium}`};
-      color: ${props => `${props.theme.colors.darkBlue}`};
+      font-size: ${props => `${props.theme.fontSizes.big}`};
+      margin-bottom: 50px;
     }
 
     .button {
-      width: 230px;
-      height: 44px;
-      
+      font-size: ${props => `${props.theme.fontSizes.medium}`};
     }
   }
 `;

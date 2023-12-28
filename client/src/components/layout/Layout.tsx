@@ -1,3 +1,4 @@
+import media from "@/utils/helper/helper";
 import React from "react";
 import styled from "styled-components";
 
@@ -19,6 +20,10 @@ const StyledLayout = styled.div`
   justify-content: center;
   align-items: center;
   margin: 20px 15px 0 15px;
+
+  ${media.extraDesktop} {
+    margin: 30px 80px 0 80px;
+  }
 `;
 
 export default Layout;

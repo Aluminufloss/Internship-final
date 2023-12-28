@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 import Text from "../shared/Text";
 import Button from "../shared/Button";
+import media from "@/utils/helper/helper";
 
 type BannerProps = {
   bannerTitle: string;
@@ -29,25 +30,23 @@ const BannerBottom: React.FC<BannerProps> = (props) => {
         unoptimized={true}
         className="image__art"
       />
-      <Text 
-        fontWeight="bold" 
-        fontSize="mediumBig" 
-        className="title"
-      >
-        {props.bannerTitle}
-      </Text>
-      <Text className="subtitle">{props.bannerSubtitle}</Text>
-      <Button
-        width="200"
-        height="38"
-        color="white"
-        type="primary"
-        fontSize="small"
-        className="button"
-        onClick={handleClick}
-      >
-        {props.buttonText}
-      </Button>
+      <div className="wrapper">
+        <Text fontWeight="bold" fontSize="mediumBig" className="title">
+          {props.bannerTitle}
+        </Text>
+        <Text className="subtitle">{props.bannerSubtitle}</Text>
+        <Button
+          width="200"
+          height="38"
+          color="white"
+          type="primary"
+          fontSize="small"
+          className="button"
+          onClick={handleClick}
+        >
+          {props.buttonText}
+        </Button>
+      </div>
       <Image
         src="/images/background/banner_castle.png"
         width={282}
@@ -67,12 +66,19 @@ const StyledBanner = styled.div`
   padding: 20px 20px 0 20px;
   margin-bottom: 20px;
   background-color: ${(props) => props.theme.colors.light};
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
-  position: relative;
   overflow: hidden;
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 50%;
+  }
 
   .image {
     position: absolute;
@@ -98,7 +104,10 @@ const StyledBanner = styled.div`
     margin-bottom: 20px;
   }
 
-  @media (min-width: 720px) {
+  ${media.tablet} {
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
     height: 400px;
     margin-bottom: 100px;
 
@@ -110,10 +119,10 @@ const StyledBanner = styled.div`
       transform: none;
 
       &__art {
-        width: 350px;
+        width: 250px;
         top: auto;
-        bottom: -70px;
-        right: -6px;
+        bottom: -100px;
+        right: 20px;
       }
     }
   }

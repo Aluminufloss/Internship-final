@@ -6,6 +6,7 @@ import Button from "../shared/Button";
 import Search from "../shared/Search";
 import ButtonLink from "../shared/ButtonLink";
 import { useRouter } from "next/router";
+import media from "@/utils/helper/helper";
 
 type HeaderProps = {
   isAuth?: boolean;
@@ -104,7 +105,7 @@ const StyledHeader = styled.header`
     font-weight: 500;
   }
 
-  @media (min-width: 720px) {
+  ${media.tablet} {
     display: flex;
     justify-content: space-between;
     align-items: center;

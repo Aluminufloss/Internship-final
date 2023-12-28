@@ -57,7 +57,7 @@ const Home: React.FC<Props> = (props) => {
           searchValue={searchValue}
         />
 
-        <Pagination />
+        {props.hasNextPage && <Pagination />}
 
         {!props.isAuth && <BannerBottom
           bannerTitle="Authorize now"

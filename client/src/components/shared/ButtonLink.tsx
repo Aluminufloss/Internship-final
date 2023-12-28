@@ -1,4 +1,5 @@
 import { STATIC_PATHS } from "@/utils/constant/constant";
+import media from "@/utils/helper/helper";
 import Link from "next/link";
 import styled from "styled-components";
 
@@ -40,7 +41,7 @@ const StyledButtonLink = styled(Link)<ButtonIconProps>`
     transform: scale(1) translateY(2px);
   }
 
-  @media (min-width: 720px) {
+  ${media.tablet} {
     width: 48px;
     height: 48px;
   }
